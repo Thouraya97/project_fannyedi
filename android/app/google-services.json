@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "234263740915",
+    "firebase_url": "https://fannyedi-b1af6.firebaseio.com",
+    "project_id": "fannyedi-b1af6",
+    "storage_bucket": "fannyedi-b1af6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:234263740915:android:058bf8aef49a42c2d41286",
+        "android_client_info": {
+          "package_name": "com.example.project_fannyedi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "234263740915-97edp0nhmq5nilab7bsppr8uiolfcsig.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.project_fannyedi",
+            "certificate_hash": "297ec2b3f8dc899389fc5665c3945ab10b60b98d"
+          }
+        },
+        {
+          "client_id": "234263740915-506uujuesbj56cl8d8b07ml6c7daltq8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAO8ND7JLqwsIZKkGzlT8eyJEqOl_JgHXs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "234263740915-506uujuesbj56cl8d8b07ml6c7daltq8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
