@@ -66,7 +66,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 //decoration : new BoxDecoration() ,
                 children: <Widget>[
                   Container(
-                    color:Colors.grey ,
+                    color:Colors.grey[200] ,
                     child: imageProfile == null
                         ? FlatButton(
                             onPressed: () {
@@ -85,6 +85,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           
                   ),
                   Container(
+                    color: Colors.grey[200],
                     child: Text(
                       currentEmail,
                       style: TextStyle(color: Colors.black),

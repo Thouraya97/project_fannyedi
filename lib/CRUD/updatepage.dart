@@ -88,6 +88,7 @@ class _MyUpdatePageState extends State<MyUpdatePage> {
     getPosts();
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color(0xffC90327),
         title: Text('Update Page'),
       ),
       body: ListView(
@@ -103,7 +104,7 @@ class _MyUpdatePageState extends State<MyUpdatePage> {
                       height: 100.0,
                       width: 100.0,
                       decoration: new BoxDecoration(
-                        border: new Border.all(color: Colors.blueAccent),
+                        border: new Border.all(color: Colors.black),
                       ),
                       padding: new EdgeInsets.all(5.0),
                       child: image == null ? Text('Add') : Image.file(image),
@@ -114,7 +115,7 @@ class _MyUpdatePageState extends State<MyUpdatePage> {
                         height: 100.0,
                         width: 100.0,
                         decoration: new BoxDecoration(
-                            border: new Border.all(color: Colors.blueAccent)),
+                            border: new Border.all(color: Colors.black)),
                         padding: new EdgeInsets.all(5.0),
                         child: productImage == ''
                             ? Text('Edit')
@@ -187,7 +188,7 @@ class _MyUpdatePageState extends State<MyUpdatePage> {
                       'https://firebasestorage.googleapis.com/v0/b/fannyedi-b1af6.appspot.com/o/'; //esto cambia segun su firestore
 
                   var fullPathImage = part1 + fullImageName2;
-                  print(fullPathImage);
+                  print(fullPathImage); 
                   Firestore.instance
                       .collection('colrecipes')
                       .document(widget.ds.documentID)

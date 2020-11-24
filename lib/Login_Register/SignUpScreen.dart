@@ -5,7 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'LogInScreen.dart';
 import 'package:project_fannyedi/HomeScreen.dart';
 import 'LogInScreen.dart';
-
+import 'package:project_fannyedi/viewpage.dart';
 class SignUpScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -26,7 +26,7 @@ class _SignUpScreen extends State<SignUpScreen> {
     await auth.createUserWithEmailAndPassword(
         email: email.trim(), password: password).then((value){
       Navigator.push(context, MaterialPageRoute(
-          builder: (BuildContext context)=>HomeScreen(value.user.email)
+          builder: (BuildContext context)=>MyHomePage(value.user.email)
       ));
     });
 

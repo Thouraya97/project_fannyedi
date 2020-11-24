@@ -57,7 +57,7 @@ try {
       email: email.trim(), password: password.trim()).then((value) {
      Navigator.pushReplacement(context, MaterialPageRoute(
        //  builder: (BuildContext context) => HomeScreen(value.user.email)
-       builder: (BuildContext context) => MyHomePage()
+       builder: (BuildContext context) => MyHomePage(value.user.email)
      ));
   });
 }catch(e){
@@ -90,7 +90,7 @@ try {
     Future(() async{
       if(await auth.currentUser()!=null){
         Navigator.pushReplacement(context, MaterialPageRoute(
-            builder: (BuildContext context) => HomeScreen(auth.currentUser().toString())));
+            builder: (BuildContext context) => MyHomePage(auth.currentUser().toString())));
       }
     }
 
@@ -273,7 +273,7 @@ try {
                 onPressed: (){
                   Future<String> user= _GoogleSignIn();
                   if(signInState){
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context)=>MyHomePage()));
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context)=>MyHomePage(user.toString())));
                   }
                 },
                 color: Colors.white,

@@ -17,7 +17,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
 
   TextEditingController nameInputController;
   TextEditingController recipeInputController;
-
+    
   Future getPost() async {
     var firestore = Firestore.instance;
     QuerySnapshot qn = await firestore.collection("colrecipes").getDocuments();
@@ -42,6 +42,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
     getPost();
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color(0xffC90327),
         title: Text('Information Page'),
       ),
       body: SingleChildScrollView(
@@ -56,7 +57,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
                       height: 300.0,
                       width: 300.0,
                       decoration: new BoxDecoration(
-                          border: new Border.all(color: Colors.blueAccent)),
+                          border: new Border.all(color: Color(0xffC90327))),
                       padding: new EdgeInsets.all(5.0),
                       child: productImage == ''
                           ? Text('Edit')
@@ -64,9 +65,9 @@ class _MyInfoPageState extends State<MyInfoPage> {
                     ),                    
                   ],
                 ),
-                new IniciarIcon(),
+              //  new IniciarIcon(),
                 new ListTile(
-                  leading: const Icon(Icons.person, color: Colors.black),
+                  //leading: const Icon(Icon., color: Colors.black),
                   title: new TextFormField(
                     controller: nameInputController,
                     validator: (value) {
@@ -88,7 +89,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
                       if (value.isEmpty) return "Ingresa un nombre";
                     },
                     decoration: new InputDecoration(
-                        hintText: "recipe", labelText: "recipe"),
+                        hintText: "description", labelText: "recipe"),
                   ),
                 ),
                 Padding(
@@ -114,15 +115,15 @@ class IniciarIcon extends StatelessWidget {
         children: <Widget>[
           new IconoMenu(
             icon: Icons.call,
-            label: "Call",
+            label: "Call maker",
           ),
           new IconoMenu(
             icon: Icons.message,
-            label: "Message",
+            label: "Message maker",
           ),
           new IconoMenu(
             icon: Icons.place,
-            label: "Place",
+            label: "Maker's Adress",
           ),
         ],
       ),
@@ -143,11 +144,11 @@ class IconoMenu extends StatelessWidget {
           new Icon(
             icon,
             size: 50.0,
-            color: Colors.blue,
+            color: Colors.black,
           ),
           new Text(
             label,
-            style: new TextStyle(fontSize: 12.0, color: Colors.blue),
+            style: new TextStyle(fontSize: 12.0, color: Colors.black),
           )
         ],
       ),

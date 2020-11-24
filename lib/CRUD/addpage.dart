@@ -83,6 +83,19 @@ class _MyAddPageState extends State<MyAddPage> {
   }
 
   void createData() async {
+    /*
+     StorageReference reference = FirebaseStorage.instance
+          .ref()
+          .child("images")
+          .child(new DateTime.now().millisecondsSinceEpoch.toString() +
+              "." +
+              image.path);
+      StorageUploadTask uploadTask = reference.putFile(image);
+     // StorageUploadTask updateTask = reference.updateMetadata(image);
+      var imageUrl = await (await uploadTask.onComplete).ref.getDownloadURL();
+      String url = imageUrl.toString();
+     
+    */
     DateTime now = DateTime.now();
     String nuevoformato = DateFormat('kk:mm:ss:MMMMd').format(now);
     var fullImageName = 'nomfoto-$nuevoformato' + '.jpg';
@@ -116,6 +129,7 @@ class _MyAddPageState extends State<MyAddPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Add Page'),
+        backgroundColor: Color(0xffC90327),
       ),
       body: ListView(
         padding: EdgeInsets.all(8),
@@ -164,7 +178,7 @@ class _MyAddPageState extends State<MyAddPage> {
                     maxLines: 10,
                     decoration: InputDecoration(
                       border: InputBorder.none,
-                      hintText: 'recipe',
+                      hintText: 'description',
                       fillColor: Colors.grey[300],
                       filled: true,
                     ),
@@ -185,7 +199,7 @@ class _MyAddPageState extends State<MyAddPage> {
                 RaisedButton(
                 onPressed: createData,
                 child: Text('Create', style: TextStyle(color: Colors.white)),
-                color: Colors.green,
+                color: Colors.black,
               ),
             ],)
         ],

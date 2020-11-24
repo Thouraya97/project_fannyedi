@@ -42,6 +42,7 @@ dependencies:
   cloud_firestore: ^0.13.7
   date_format: ^1.0.6
   intl: ^0.15.8
+  carousel_pro: ^1.0.0
 
 dev_dependencies:
   flutter_test:
@@ -64,6 +65,15 @@ flutter:
     - assets/Onboarding1.png
     - assets/Onboarding2.png
     - assets/Onboarding3.png
+    - assets/i1.jpg
+    - assets/i2.jpg
+    - assets/i3.jpg
+    - assets/i4.jpg
+    - assets/i5.jpg
+    - assets/i6.jpg
+    - assets/i7.jpg
+    - assets/i8.jpg
+    - assets/i9.jpg
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

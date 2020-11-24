@@ -1,4 +1,4 @@
-import 'dart:collection';
+/*import 'dart:collection';
 import 'dart:io';
 import'package:project_fannyedi/HomeScreen.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
@@ -322,7 +322,7 @@ class _UploadDataState extends State<UploadData> {
        auth.currentUser().then((value) {
       Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-              builder: (BuildContext context) => HomeScreen(value.email)));
+            //  builder: (BuildContext context) => HomeScreen(value.email)));
     });
 
     }
@@ -332,7 +332,8 @@ class _UploadDataState extends State<UploadData> {
     await auth.currentUser().then((value) {
       Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-              builder: (BuildContext context) => HomeScreen(value.email)));
+            //  builder: (BuildContext context) => HomeScreen(value.email)));
     });
   }
 }
+*/

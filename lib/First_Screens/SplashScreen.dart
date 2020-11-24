@@ -57,7 +57,7 @@ class _SplashScreen extends State<SplashScreen> {
     await auth.currentUser().then((value) {
       Navigator.of(context).pushReplacement(MaterialPageRoute(
           /*builder: (BuildContext context) => HomeScreen(value.email))*/
-          builder: (BuildContext context) => MyHomePage())
+          builder: (BuildContext context) => MyHomePage(value.email))
           );
     });
   }
