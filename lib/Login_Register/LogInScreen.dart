@@ -73,7 +73,7 @@ try {
     GoogleSignInAccount signInAccount=await _googleSignIn.signIn();
     GoogleSignInAuthentication signInAuthentication=await signInAccount.authentication;
     AuthCredential credential = GoogleAuthProvider.getCredential(idToken: signInAuthentication.idToken, accessToken: signInAuthentication.accessToken);
-    FirebaseUser user=(await auth.signInWithCredential(credential)).user;
+    User user=(await auth.signInWithCredential(credential)).user;
     print(user);
 
     setState(() {
@@ -88,9 +88,9 @@ try {
   void initState() {
     super.initState();
     Future(() async{
-      if(await auth.currentUser()!=null){
+      if( auth.currentUser!=null){
         Navigator.pushReplacement(context, MaterialPageRoute(
-            builder: (BuildContext context) => MyHomePage(auth.currentUser().toString())));
+            builder: (BuildContext context) => MyHomePage(auth.currentUser.toString())));
       }
     }
 

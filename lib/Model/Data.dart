@@ -1,4 +1,4 @@
-import 'package:firebase_database/firebase_database.dart';
+//import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class Data {
@@ -26,12 +26,5 @@ class Data {
 
   //String get id => _id;
 
-  Data.fromSnapshot(DataSnapshot snapshot) {
-    uploadid = snapshot.key;
-    name = snapshot.value['name'];
-    imgUrl = snapshot.value['imgUrl'];
-    material = snapshot.value['material'];
-    userId = snapshot.value['userId'];
-    price = snapshot.value['price'];
-  }
+  
 }

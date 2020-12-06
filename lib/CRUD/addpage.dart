@@ -41,18 +41,23 @@ class _MyAddPageState extends State<MyAddPage> {
   TextEditingController recipeInputController;
   TextEditingController nameInputController;
   TextEditingController imageInputController;
- FirebaseAuth auth = FirebaseAuth.instance;
- //final userId=currentUser().uid ;
- 
- void inputData() async {
-    final FirebaseUser user = await auth.currentUser();
+  FirebaseAuth auth = FirebaseAuth.instance;
+  //final userId=currentUser().uid ;
+
+  void inputData() async {
+   User user =  FirebaseAuth.instance.currentUser;
     final userid = user.uid;
     // here you write the codes to input the data into firestore
   }
+
   String id;
-   //final FirebaseUser user = await auth.currentUser();
+  String idp;
+  //final FirebaseUser user = await auth.currentUser();
   final db = Firestore.instance;
+  final dbuser = Firestore.instance;
   final _formKey = GlobalKey<FormState>();
+  final _formKey1 = GlobalKey<FormState>();
+
   String name;
   String recipe;
 
@@ -101,27 +106,47 @@ class _MyAddPageState extends State<MyAddPage> {
     var fullImageName = 'nomfoto-$nuevoformato' + '.jpg';
     var fullImageName2 = 'nomfoto-$nuevoformato' + '.jpg';
 
-    final StorageReference ref =
+    final Reference ref =
         FirebaseStorage.instance.ref().child(fullImageName);
-    final StorageUploadTask task = ref.putFile(image);
+    final UploadTask task = ref.putFile(image);
 
     var part1 =
         'https://firebasestorage.googleapis.com/v0/b/fannyedi-b1af6.appspot.com/o/';
 
     var fullPathImage = part1 + fullImageName2;
     print(fullPathImage);
-     final FirebaseUser user = await auth.currentUser();
+    final  user =  auth.currentUser;
     final userID = user.uid;
 
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      DocumentReference ref = await db.collection('colrecipes')
-      .add(
-          {'name': '$name', 'recipe': '$recipe', 'image': '$fullPathImage', 'userId': userID});
-      setState(() => id = ref.documentID);
+      DocumentReference ref = await db.collection('colrecipes').add({
+        'name': '$name',
+        'recipe': '$recipe',
+        'image': '$fullPathImage',
+        'userId': userID
+      });
+      setState(() => id = ref.id);
       Navigator.of(context).pop(); //regrese a la pantalla anterior
+      // DocumentReference refUser=await db.collection('user')
+
     }
+    /*if (_formKey1.currentState.validate()) {
+      _formKey1.currentState.save();
+      DocumentReference refUser = await dbuser
+          .collection("User")
+          .document(userID)
+          .collection('My Products')
+          .add({
+        'name': '$name',
+        'recipe': '$recipe',
+        'image': '$fullPathImage',
+        'userId': userID
+      });
+      setState(() => idp = refUser.documentID);
+    }*/
   }
+
   @override
   Widget build(BuildContext context) {
     CommonThings.size = MediaQuery.of(context).size;
@@ -165,12 +190,12 @@ class _MyAddPageState extends State<MyAddPage> {
                       fillColor: Colors.grey[300],
                       filled: true,
                     ),
-                     validator: (value) {
+                    validator: (value) {
                       if (value.isEmpty) {
                         return 'Please enter some text';
                       }
                     },
-                    onSaved: (value) => name = value,                    
+                    onSaved: (value) => name = value,
                   ),
                 ),
                 Container(
@@ -182,12 +207,12 @@ class _MyAddPageState extends State<MyAddPage> {
                       fillColor: Colors.grey[300],
                       filled: true,
                     ),
-                     validator: (value) {
+                    validator: (value) {
                       if (value.isEmpty) {
                         return 'Please enter some recipe';
                       }
                     },
-                    onSaved: (value) => recipe = value,                    
+                    onSaved: (value) => recipe = value,
                   ),
                 )
               ],
@@ -196,12 +221,13 @@ class _MyAddPageState extends State<MyAddPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-                RaisedButton(
+              RaisedButton(
                 onPressed: createData,
                 child: Text('Create', style: TextStyle(color: Colors.white)),
                 color: Colors.black,
               ),
-            ],)
+            ],
+          )
         ],
       ),
     );

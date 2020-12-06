@@ -1,7 +1,7 @@
-import 'dart:async';
+/*import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
+//import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:project_fannyedi/Model/Data.dart';
 
@@ -66,7 +66,7 @@ Widget CardUI(String imgUrl, String name, String material, String price,String u
           SizedBox(height: 1,),
 
           IconButton(icon: Icon(Icons.favorite,color: Colors.red,), onPressed: () {
-            auth.currentUser().then((value) {
+            auth.currentUser((value) {
               DatabaseReference favRef = FirebaseDatabase.instance.reference().child(
                   "Data").child(uploadId).child("Fav")
                   .child(value.uid).child("state");
@@ -127,4 +127,4 @@ Widget CardUI(String imgUrl, String name, String material, String price,String u
     });
   }
 
-}
+}*/

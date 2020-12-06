@@ -1,4 +1,4 @@
-/*import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:project_fannyedi/CRUD/addpage.dart';
 import 'package:project_fannyedi/CRUD/informationPage.dart';
@@ -35,24 +35,31 @@ class CommonThings {
   static Size size;
 }
 
-class MyProfile extends StatefulWidget {
-  //String currentEmail;
+class MyProducts extends StatefulWidget {
+  String currentEmail;
 
-  //MyHomePage(this.currentEmail);
+  MyProducts(this.currentEmail);
 
   @override
-  _MyProfileState createState() => _MyProfileState();
+  _MyProductsState createState() => _MyProductsState(currentEmail);
 }
 
-class _MyProfileState extends State<MyProfile> {
+class _MyProductsState extends State<MyProducts> {
   String currentEmail;
-  FirebaseAuth auth = FirebaseAuth.instance;
-  int _page = 0;
 
- /// TextEditingController recipeInputController;
+  FirebaseAuth auth = FirebaseAuth.instance;
+    final userUid = FirebaseAuth.instance.currentUser.uid;
+
+  int _page = 0;
+  Future<String> getUserUid() async {
+    User myUser = auth.currentUser;
+   // return userUid = myUser.uid;
+  }
+
+  /// TextEditingController recipeInputController;
   //TextEditingController nameInputController;
   String id;
-  final db = Firestore.instance;
+  final db = FirebaseFirestore.instance;
   final MyAddPage add = MyAddPage();
   Widget _showPage = new MyAddPage();
   Widget _pageChooser(int page) {
@@ -67,11 +74,11 @@ class _MyProfileState extends State<MyProfile> {
   //final _formKey = GlobalKey<FormState>();
   String name;
   String recipe;
-  //_MyHomePageState(this.currentEmail);
+  _MyProductsState(this.currentEmail);
 
   //create function for delete one register
   void deleteData(DocumentSnapshot doc) async {
-    await db.collection('colrecipes').document(doc.documentID).delete();
+    //   await db.collection('colrecipes').document(doc.documentID).delete();
     setState(() => id = null);
   }
 
@@ -97,14 +104,13 @@ class _MyProfileState extends State<MyProfile> {
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xffC90327),
-        title: Text('View Page1'),
+        title: Text('My Products'),
         actions: <Widget>[],
       ),
-   // image_carousel,
+      // image_carousel,
       drawer: Drawer(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -138,8 +144,7 @@ class _MyProfileState extends State<MyProfile> {
                 Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                         builder: (BuildContext context) => MyAddPage()
-                        ));
+                        builder: (BuildContext context) => MyAddPage()));
               },
             ),
 
@@ -155,10 +160,9 @@ class _MyProfileState extends State<MyProfile> {
                 title: Text("My Profile"),
                 leading: Icon(Icons.person),
                 onTap: () {
-                  if(auth.currentUser!=null) {
+                  if (auth.currentUser != null) {
                     Navigator.of(context).pushReplacement(MaterialPageRoute(
-                        builder: (BuildContext context) =>
-                            ProfileScreen()));
+                        builder: (BuildContext context) => ProfileScreen()));
                   }
                 }),
             Divider(),
@@ -167,40 +171,43 @@ class _MyProfileState extends State<MyProfile> {
               title: Text("Contact US"),
               leading: Icon(Icons.email),
             ),
-             Divider(),
+            Divider(),
 
             ListTile(
               title: Text("Log Out"),
               leading: Icon(Icons.email),
             ) //line
-          
-             //line
+
+            //line
           ],
         ),
       ),
-      
+
       body: StreamBuilder(
-          stream: Firestore.instance.collection("User").snapshots().where((event) => false),
+          stream: FirebaseFirestore.instance
+              .collection("colrecipes")
+              .where('userId', isEqualTo: userUid)
+              .get()
+              .asStream(),
           builder:
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (!snapshot.hasData) {
               return Text('"Loading...');
             }
-            int length = snapshot.data.documents.length;
-            return ListView.builder(
-               /* gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            print(userUid);
+            int length = snapshot.data.docs.length;
+            return GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2, //two columns
                   mainAxisSpacing: 0.1, //space the card
                   childAspectRatio: 0.800, //space largo de cada card
-                ),*/
+                ),
                 itemCount: length,
                 padding: EdgeInsets.all(2.0),
                 itemBuilder: (_, int index) {
-
-                  final DocumentSnapshot doc = snapshot.data.documents[index];
-
+                  final DocumentSnapshot doc = snapshot.data.docs[index];
                   return new Container(
-                    child: Card( 
+                    child: Card(
                       child: Column(
                         children: <Widget>[
                           Row(
@@ -209,7 +216,7 @@ class _MyProfileState extends State<MyProfile> {
                                 onTap: () => navigateToDetail(doc),
                                 child: new Container(
                                   child: Image.network(
-                                    '${doc.data["image"]}' + '?alt=media',
+                                    '${doc.data()["image"]}' + '?alt=media',
                                   ),
                                   width: 170,
                                   height: 120,
@@ -220,14 +227,14 @@ class _MyProfileState extends State<MyProfile> {
                           Expanded(
                             child: ListTile(
                               title: Text(
-                                doc.data["name"],
+                                doc.data()["name"],
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 19.0,
                                 ),
                               ),
                               subtitle: Text(
-                                doc.data["recipe"],
+                                doc.data()["recipe"],
                                 style: TextStyle(
                                     color: Colors.redAccent, fontSize: 12.0),
                               ),
@@ -267,7 +274,7 @@ class _MyProfileState extends State<MyProfile> {
                   );
                 });
           }),
-        
+
       /* floatingActionButton: FloatingActionButton(
         child: Icon(
           Icons.add,
@@ -306,4 +313,3 @@ class _MyProfileState extends State<MyProfile> {
     );
   }
 }
-*/

@@ -5,9 +5,11 @@ import 'package:project_fannyedi/CRUD/informationPage.dart';
 import 'package:project_fannyedi/CRUD/updatepage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'CRUD/UploadData.dart';
-import 'Login_Register/Profile.dart';
+//import 'Login_Register/Profile.dart';
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:project_fannyedi/Login_Register/User_Profile.dart';
+import 'package:project_fannyedi/CRUD/MyProduct.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -45,10 +47,18 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   String currentEmail;
   FirebaseAuth auth = FirebaseAuth.instance;
+  
   int _page = 0;
-
-  TextEditingController recipeInputController;
-  TextEditingController nameInputController;
+Future<void> Goto() async {
+     if(auth.currentUser!=null) {
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+          /*builder: (BuildContext context) => HomeScreen(value.email))*/
+          builder: (BuildContext context) => MyHomePage(auth.currentUser.email))
+          );
+    }
+  }
+ /// TextEditingController recipeInputController;
+  //TextEditingController nameInputController;
   String id;
   final db = Firestore.instance;
   final MyAddPage add = MyAddPage();
@@ -99,7 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xffC90327),
-        title: Text('View Page1'),
+        title: Text('Home Page'),
         actions: <Widget>[],
       ),
    // image_carousel,
@@ -142,10 +152,16 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
 
             ListTile(
-              title: Text("My Favorite"),
+              title: Text("My Products"),
               leading: Icon(Icons.favorite),
               onTap: () {
-                // Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => MyFavorite()));
+               if ( auth.currentUser!=null) {
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+          /*builder: (BuildContext context) => HomeScreen(value.email))*/
+          builder: (BuildContext context) => MyProducts(auth.currentUser.email))
+          );
+    }
+               ///  Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => MyProducts()));
               },
             ),
 
@@ -153,18 +169,26 @@ class _MyHomePageState extends State<MyHomePage> {
                 title: Text("My Profile"),
                 leading: Icon(Icons.person),
                 onTap: () {
-                  auth.currentUser().then((value) {
+                 if(auth.currentUser!=null) {
                     Navigator.of(context).pushReplacement(MaterialPageRoute(
                         builder: (BuildContext context) =>
-                            ProfileScreen(value.email)));
-                  });
+                            ProfileScreen()));
+                  }
                 }),
             Divider(),
 
             ListTile(
               title: Text("Contact US"),
               leading: Icon(Icons.email),
+            ),
+             Divider(),
+
+            ListTile(
+              title: Text("Log Out"),
+              leading: Icon(Icons.email),
             ) //line
+          
+             //line
           ],
         ),
       ),
@@ -197,7 +221,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 onTap: () => navigateToDetail(doc),
                                 child: new Container(
                                   child: Image.network(
-                                    '${doc.data["image"]}' + '?alt=media',
+                                    '${doc.data()["image"]}' + '?alt=media',
                                   ),
                                   width: 170,
                                   height: 120,
@@ -208,14 +232,14 @@ class _MyHomePageState extends State<MyHomePage> {
                           Expanded(
                             child: ListTile(
                               title: Text(
-                                doc.data["name"],
+                                doc.data()["name"],
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 19.0,
                                 ),
                               ),
                               subtitle: Text(
-                                doc.data["recipe"],
+                                doc.data()["recipe"],
                                 style: TextStyle(
                                     color: Colors.redAccent, fontSize: 12.0),
                               ),

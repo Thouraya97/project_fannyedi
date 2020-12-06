@@ -19,19 +19,19 @@ class _MyInfoPageState extends State<MyInfoPage> {
   TextEditingController recipeInputController;
     
   Future getPost() async {
-    var firestore = Firestore.instance;
-    QuerySnapshot qn = await firestore.collection("colrecipes").getDocuments();
-    return qn.documents;
+    var firestore = FirebaseFirestore.instance;
+    QuerySnapshot qn = await firestore.collection("colrecipes").get();
+    return qn.docs;
   }
 
    @override
   void initState() {
     super.initState();
     recipeInputController =
-        new TextEditingController(text: widget.ds.data["recipes"]);
+        new TextEditingController(text: widget.ds.data()["recipes"]);
     nameInputController =
-        new TextEditingController(text: widget.ds.data["name"]);
-    productImage = widget.ds.data["image"];
+        new TextEditingController(text: widget.ds.data()["name"]);
+    productImage = widget.ds.data()["image"];
     print(productImage);
   }
 
@@ -95,6 +95,13 @@ class _MyInfoPageState extends State<MyInfoPage> {
                 Padding(
                   padding: EdgeInsets.only(top: 8.0),
                 ),
+                /*FlatButton(
+                  
+                   Text('Add to cart'),
+                   onPressed: (){
+
+                   },
+                ),*/
                 
               ],
             ),

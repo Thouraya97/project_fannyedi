@@ -57,10 +57,10 @@ class _MyUpdatePageState extends State<MyUpdatePage> {
   void initState() {
     super.initState();
     recipeInputController =
-        new TextEditingController(text: widget.ds.data["recipe"]);
+        new TextEditingController(text: widget.ds.data()["recipe"]);
     nameInputController =
-        new TextEditingController(text: widget.ds.data["name"]);
-    productImage = widget.ds.data["image"]; //nuevo
+        new TextEditingController(text: widget.ds.data()["name"]);
+    productImage = widget.ds.data()["image"]; //nuevo
     print(productImage); //nuevo
   }
 
@@ -180,19 +180,19 @@ class _MyUpdatePageState extends State<MyUpdatePage> {
                   var fullImageName = 'nomfoto-$nuevoformato' + '.jpg';
                   var fullImageName2 = 'nomfoto-$nuevoformato' + '.jpg';
 
-                  final StorageReference ref =
+                  final Reference ref =
                       FirebaseStorage.instance.ref().child(fullImageName);
-                  final StorageUploadTask task = ref.putFile(image);
+                  final UploadTask task = ref.putFile(image);
 
                   var part1 =
                       'https://firebasestorage.googleapis.com/v0/b/fannyedi-b1af6.appspot.com/o/'; //esto cambia segun su firestore
 
                   var fullPathImage = part1 + fullImageName2;
                   print(fullPathImage); 
-                  Firestore.instance
+                  FirebaseFirestore.instance
                       .collection('colrecipes')
-                      .document(widget.ds.documentID)
-                      .updateData({
+                      .doc(widget.ds.id)
+                      .update({
                     'name': nameInputController.text,
                     'recipe': recipeInputController.text,
                     'image': '$fullPathImage'
