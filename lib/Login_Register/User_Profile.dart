@@ -7,7 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:project_fannyedi/Model/User.dart';
 import 'package:flutter/material.dart';
-
+import 'package:project_fannyedi/viewpage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -264,7 +264,7 @@ final  String userUid=FirebaseAuth.instance.currentUser.uid;
     return Scaffold(
       resizeToAvoidBottomInset: true,
       key: _scaffoldKey,
-      backgroundColor: Color(0xfff8f8f8),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         leading: edit == true
             ? IconButton(
@@ -283,19 +283,18 @@ final  String userUid=FirebaseAuth.instance.currentUser.uid;
                 icon: Icon(
                   Icons.arrow_back,
                   color: Colors.black45,
-                  size: 30,
                 ),
                 onPressed: () {
                   setState(() {
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute(
-                       // builder: (ctx) => HomePage(),
+                        builder: (ctx) => MyHomePage(FirebaseAuth.instance.currentUser.email.toString()),
                       ),
                     );
                   });
                 },
               ),
-        backgroundColor: Colors.white,
+        backgroundColor: Color(0xffC90327),
         actions: [
           edit == false
               ? MyButton()
@@ -422,7 +421,7 @@ final  String userUid=FirebaseAuth.instance.currentUser.uid;
                                     borderRadius: BorderRadius.circular(20)),
                                 child: edit == false
                                     ? MyButton(
-                                        name: "Edit Profile",
+                                        //name: "Edit Profile",
                                         onPressed: () {
                                           setState(() {
                                             edit = true;
@@ -466,8 +465,8 @@ class MyTextFormField extends StatelessWidget {
 }
 class MyButton extends StatelessWidget {
   final Function onPressed;
-  final String name;
-  MyButton({this.name, this.onPressed});
+  //final String name;
+  MyButton({ this.onPressed});
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -475,10 +474,10 @@ class MyButton extends StatelessWidget {
       width: double.infinity,
       child: RaisedButton(
         child: Text(
-          name,
+          "Edit",
           style: TextStyle(color: Colors.white),
         ),
-        color: Color(0xff746bc9),
+        color: Color(0xffC90327),
         onPressed: onPressed,
       ),
     );

@@ -51,6 +51,7 @@ class _SignUpScreen extends State<SignUpScreen> {
       "UserAddress": address.text,
       // "UserGender": isMale == true ? "Male" : "Female",
       "UserNumber": phoneNumber.text,
+      "UserId":userID,
     });
     //setState(() => Idu = refUser.documentID);
 
