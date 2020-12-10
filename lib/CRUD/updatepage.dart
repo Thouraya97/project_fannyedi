@@ -17,15 +17,17 @@ class MyUpdatePage extends StatefulWidget {
 
 class _MyUpdatePageState extends State<MyUpdatePage> {
   String productImage;
-  TextEditingController recipeInputController;
+  TextEditingController priceInputController;
   TextEditingController nameInputController;
   TextEditingController imageInputController;
+   TextEditingController descriptionInputController;
 
   String id;
-  final db = Firestore.instance;
+  final db = FirebaseFirestore.instance;
   final _formKey = GlobalKey<FormState>();
   String name;
-  String recipe;
+  String price;
+  String description;
 
   pickerCam() async {
     File img = await ImagePicker.pickImage(source: ImageSource.camera);
@@ -56,10 +58,12 @@ class _MyUpdatePageState extends State<MyUpdatePage> {
   @override
   void initState() {
     super.initState();
-    recipeInputController =
-        new TextEditingController(text: widget.ds.data()["recipe"]);
+    priceInputController =
+        new TextEditingController(text: widget.ds.data()["price"]);
     nameInputController =
         new TextEditingController(text: widget.ds.data()["name"]);
+         descriptionInputController =
+        new TextEditingController(text: widget.ds.data()["description"]);
     productImage = widget.ds.data()["image"]; //nuevo
     print(productImage); //nuevo
   }
@@ -77,10 +81,10 @@ class _MyUpdatePageState extends State<MyUpdatePage> {
   */
 
   Future getPosts() async {
-    var firestore = Firestore.instance;
-    QuerySnapshot qn = await firestore.collection("colrecipe").getDocuments();
+    var firestore = FirebaseFirestore.instance;
+    QuerySnapshot qn = await firestore.collection("Products").get();
     // print();
-    return qn.documents;
+    return qn.docs;
   }
 
   @override
@@ -149,20 +153,36 @@ class _MyUpdatePageState extends State<MyUpdatePage> {
                 ),
                 Container(
                   child: TextFormField(
-                    controller: recipeInputController,
-                    maxLines: 10,
+                    controller: priceInputController,
                     decoration: InputDecoration(
                       border: InputBorder.none,
-                      hintText: 'recipe',
+                      hintText: 'price',
                       fillColor: Colors.grey[300],
                       filled: true,
                     ),
                     validator: (value) {
                       if (value.isEmpty) {
-                        return 'Please enter some recipe';
+                        return 'Please enter the price of the product';
                       }
                     },
-                    onSaved: (value) => recipe = value,
+                    onSaved: (value) => price = value,
+                  ),
+                ),
+                Container(
+                  child: TextFormField(
+                    controller: priceInputController,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'description',
+                      fillColor: Colors.grey[300],
+                      filled: true,
+                    ),
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return 'Please describe the product';
+                      }
+                    },
+                    onSaved: (value) => description = value,
                   ),
                 )
               ],
@@ -188,13 +208,13 @@ class _MyUpdatePageState extends State<MyUpdatePage> {
                       'https://firebasestorage.googleapis.com/v0/b/fannyedi-b1af6.appspot.com/o/'; //esto cambia segun su firestore
 
                   var fullPathImage = part1 + fullImageName2;
-                  print(fullPathImage); 
+                  print(fullPathImage);
                   FirebaseFirestore.instance
                       .collection('colrecipes')
                       .doc(widget.ds.id)
                       .update({
                     'name': nameInputController.text,
-                    'recipe': recipeInputController.text,
+                    'recipe': priceInputController.text,
                     'image': '$fullPathImage'
                   });
                   Navigator.of(context).pop(); //regrese a la pantalla anterior

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 //import 'package:project_fannyedi/CRUD/viewpage.dart';
 import 'LogInScreen.dart';
-import 'package:project_fannyedi/HomeScreen.dart';
 import 'LogInScreen.dart';
 import 'package:project_fannyedi/viewpage.dart';
 

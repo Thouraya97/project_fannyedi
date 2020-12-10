@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 //import 'package:flutter/material.dart';
-import 'package:project_fannyedi/HomeScreen.dart';
 import 'package:project_fannyedi/viewpage.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -12,7 +11,6 @@ import 'package:flutter/material.dart';
 //import 'HomeScreen.dart';
 //import 'LogInScreen.dart';
 import 'OnBoardingScreens.dart';
-import 'package:project_fannyedi/HomeScreen.dart';
 //import 'package:project_fannyedi/CRUD/viewpage.dart';
 
 class SplashScreen extends StatefulWidget {

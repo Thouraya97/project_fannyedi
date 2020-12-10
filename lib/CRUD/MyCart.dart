@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:project_fannyedi/CRUD/MyCart.dart';
 import 'package:project_fannyedi/CRUD/addpage.dart';
 import 'package:project_fannyedi/CRUD/informationPage.dart';
 import 'package:project_fannyedi/CRUD/updatepage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'Login_Register/LogInScreen.dart';
+import 'package:project_fannyedi/viewpage.dart';
+import '../Login_Register/LogInScreen.dart';
 //import 'Login_Register/Profile.dart';
-
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:project_fannyedi/Login_Register/User_Profile.dart';
@@ -37,18 +36,19 @@ class CommonThings {
   static Size size;
 }
 
-class MyHomePage extends StatefulWidget {
+class MyCart extends StatefulWidget {
   String currentEmail;
 
-  MyHomePage(this.currentEmail);
+  MyCart(this.currentEmail);
 
   @override
-  _MyHomePageState createState() => _MyHomePageState(currentEmail);
+  _MyCartState createState() => _MyCartState(currentEmail);
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyCartState extends State<MyCart> {
   String currentEmail;
   FirebaseAuth auth = FirebaseAuth.instance;
+ String uidc=FirebaseAuth.instance.currentUser.uid;
 
   int _page = 0;
   Future<void> Goto() async {
@@ -56,7 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
       Navigator.of(context).pushReplacement(MaterialPageRoute(
           /*builder: (BuildContext context) => HomeScreen(value.email))*/
           builder: (BuildContext context) =>
-              MyHomePage(auth.currentUser.email)));
+              MyCart(auth.currentUser.email)));
     }
   }
 
@@ -78,7 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
   //final _formKey = GlobalKey<FormState>();
   String name;
   String product;
-  _MyHomePageState(this.currentEmail);
+  _MyCartState(this.currentEmail);
 
   //create function for delete one register
   void deleteData(DocumentSnapshot doc) async {
@@ -118,7 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xffC90327),
-        title: Text('Home Page'),
+        title: Text('My Cart'),
         actions: <Widget>[],
       ),
       // image_carousel,
@@ -173,7 +173,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ///  Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => MyProducts()));
               },
             ),
-            ListTile(
+             ListTile(
               title: Text("My Cart"),
               leading: Icon(Icons.local_grocery_store),
               onTap: () {
@@ -233,7 +233,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
 
       body: StreamBuilder(
-          stream: FirebaseFirestore.instance.collection("Products").snapshots(),
+          stream: FirebaseFirestore.instance.collection("User").doc(uidc).collection('Cart').snapshots(),
           builder:
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (!snapshot.hasData) {

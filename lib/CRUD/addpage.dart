@@ -6,6 +6,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart'; //formateo hora
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../viewpage.dart';
+
+
 File image;
 String filename;
 
@@ -38,28 +41,26 @@ class MyAddPage extends StatefulWidget {
 }
 
 class _MyAddPageState extends State<MyAddPage> {
-  TextEditingController recipeInputController;
+  TextEditingController descriptionInputController;
   TextEditingController nameInputController;
+  TextEditingController priceInputController;
+  TextEditingController cathegoryInputController;
+
   TextEditingController imageInputController;
   FirebaseAuth auth = FirebaseAuth.instance;
   //final userId=currentUser().uid ;
 
-  void inputData() async {
-   User user =  FirebaseAuth.instance.currentUser;
-    final userid = user.uid;
-    // here you write the codes to input the data into firestore
-  }
-
+  
   String id;
   String idp;
   //final FirebaseUser user = await auth.currentUser();
-  final db = Firestore.instance;
-  final dbuser = Firestore.instance;
+  final db = FirebaseFirestore.instance;
+  final dbuser = FirebaseFirestore.instance;
   final _formKey = GlobalKey<FormState>();
-  final _formKey1 = GlobalKey<FormState>();
-
+  
   String name;
-  String recipe;
+  String price;
+  String description;
 
   pickerCam() async {
     File img = await ImagePicker.pickImage(source: ImageSource.camera);
@@ -88,26 +89,12 @@ class _MyAddPageState extends State<MyAddPage> {
   }
 
   void createData() async {
-    /*
-     StorageReference reference = FirebaseStorage.instance
-          .ref()
-          .child("images")
-          .child(new DateTime.now().millisecondsSinceEpoch.toString() +
-              "." +
-              image.path);
-      StorageUploadTask uploadTask = reference.putFile(image);
-     // StorageUploadTask updateTask = reference.updateMetadata(image);
-      var imageUrl = await (await uploadTask.onComplete).ref.getDownloadURL();
-      String url = imageUrl.toString();
-     
-    */
     DateTime now = DateTime.now();
     String nuevoformato = DateFormat('kk:mm:ss:MMMMd').format(now);
     var fullImageName = 'nomfoto-$nuevoformato' + '.jpg';
     var fullImageName2 = 'nomfoto-$nuevoformato' + '.jpg';
 
-    final Reference ref =
-        FirebaseStorage.instance.ref().child(fullImageName);
+    final Reference ref = FirebaseStorage.instance.ref().child(fullImageName);
     final UploadTask task = ref.putFile(image);
 
     var part1 =
@@ -115,37 +102,28 @@ class _MyAddPageState extends State<MyAddPage> {
 
     var fullPathImage = part1 + fullImageName2;
     print(fullPathImage);
-    final  user =  auth.currentUser;
-    final userID = user.uid;
+    final user = auth.currentUser;
+    final ownerID = user.uid;
 
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      DocumentReference ref = await db.collection('colrecipes').add({
+      DocumentReference ref = await db.collection('Products').add({
         'name': '$name',
-        'recipe': '$recipe',
+        'price': '$price',
+        'description': '$description',
         'image': '$fullPathImage',
-        'userId': userID
+        'ownerId': ownerID
       });
       setState(() => id = ref.id);
-      Navigator.of(context).pop(); //regrese a la pantalla anterior
-      // DocumentReference refUser=await db.collection('user')
-
+     // Navigator.of(context).pop(); 
+       if (auth.currentUser != null) {
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      /*builder: (BuildContext context) => HomeScreen(value.email))*/
+                      builder: (BuildContext context) =>
+                          MyHomePage(auth.currentUser.email)));
     }
-    /*if (_formKey1.currentState.validate()) {
-      _formKey1.currentState.save();
-      DocumentReference refUser = await dbuser
-          .collection("User")
-          .document(userID)
-          .collection('My Products')
-          .add({
-        'name': '$name',
-        'recipe': '$recipe',
-        'image': '$fullPathImage',
-        'userId': userID
-      });
-      setState(() => idp = refUser.documentID);
-    }*/
-  }
+    }
+     }
 
   @override
   Widget build(BuildContext context) {
@@ -153,7 +131,7 @@ class _MyAddPageState extends State<MyAddPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Page'),
+        title: Text('Add Product'),
         backgroundColor: Color(0xffC90327),
       ),
       body: ListView(
@@ -192,7 +170,7 @@ class _MyAddPageState extends State<MyAddPage> {
                     ),
                     validator: (value) {
                       if (value.isEmpty) {
-                        return 'Please enter some text';
+                        return 'Please enter the name of the product';
                       }
                     },
                     onSaved: (value) => name = value,
@@ -200,7 +178,23 @@ class _MyAddPageState extends State<MyAddPage> {
                 ),
                 Container(
                   child: TextFormField(
-                    maxLines: 10,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'price',
+                      fillColor: Colors.grey[300],
+                      filled: true,
+                    ),
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return 'Please enter the price of the product ';
+                      }
+                    },
+                    onSaved: (value) => price = value,
+                  ),
+                ),
+                Container(
+                  child: TextFormField(
+                    maxLines: 5,
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: 'description',
@@ -209,10 +203,10 @@ class _MyAddPageState extends State<MyAddPage> {
                     ),
                     validator: (value) {
                       if (value.isEmpty) {
-                        return 'Please enter some recipe';
+                        return 'Please describe your product ';
                       }
                     },
-                    onSaved: (value) => recipe = value,
+                    onSaved: (value) => description = value,
                   ),
                 )
               ],

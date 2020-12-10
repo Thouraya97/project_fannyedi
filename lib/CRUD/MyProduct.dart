@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:project_fannyedi/CRUD/MyCart.dart';
 import 'package:project_fannyedi/CRUD/addpage.dart';
 import 'package:project_fannyedi/CRUD/informationPage.dart';
 import 'package:project_fannyedi/CRUD/updatepage.dart';
@@ -7,9 +8,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 //import 'CRUD/UploadData.dart';
 //import 'Login_Register/Profile.dart';
 import 'package:carousel_pro/carousel_pro.dart';
+import 'package:project_fannyedi/Login_Register/LogInScreen.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:project_fannyedi/Login_Register/User_Profile.dart';
 import 'package:project_fannyedi/CRUD/MyProduct.dart';
+
+import '../viewpage.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -48,7 +52,7 @@ class _MyProductsState extends State<MyProducts> {
   String currentEmail;
 
   FirebaseAuth auth = FirebaseAuth.instance;
-    final userUid = FirebaseAuth.instance.currentUser.uid;
+    final ownerUid = FirebaseAuth.instance.currentUser.uid;
 
   int _page = 0;
   Future<String> getUserUid() async {
@@ -139,7 +143,7 @@ class _MyProductsState extends State<MyProducts> {
             ),
             ListTile(
               title: Text("Upload"),
-              leading: Icon(Icons.cloud_upload),
+              leading: Icon(Icons.add_business),
               onTap: () {
                 Navigator.pushReplacement(
                     context,
@@ -150,11 +154,35 @@ class _MyProductsState extends State<MyProducts> {
 
             ListTile(
               title: Text("My Products"),
-              leading: Icon(Icons.favorite),
+              leading: Icon(Icons.collections_bookmark),
               onTap: () {
-                // Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => MyProducts()));
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => MyProducts(currentEmail)));
               },
             ),
+            ListTile(
+              title: Text("My Cart"),
+              leading: Icon(Icons.local_grocery_store),
+              onTap: () {
+                if (auth.currentUser != null) {
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      /*builder: (BuildContext context) => HomeScreen(value.email))*/
+                      builder: (BuildContext context) =>
+                          MyCart(auth.currentUser.email)));
+                }
+
+                ///  Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => MyProducts()));
+              },
+            ),
+             ListTile(
+                title: Text("My Home"),
+                leading: Icon(Icons.home),
+                onTap: () {
+                  if (auth.currentUser != null) {
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                            MyHomePage(currentEmail)));
+                  }
+                }),
 
             ListTile(
                 title: Text("My Profile"),
@@ -168,13 +196,19 @@ class _MyProductsState extends State<MyProducts> {
             Divider(),
 
             ListTile(
-              title: Text("Contact US"),
+              title: Text("Log out"),
               leading: Icon(Icons.email),
+              onTap: (){
+                  FirebaseAuth.instance.signOut().then((value) {
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (BuildContext context) => LogInScreen()));
+    });
+              },
             ),
             Divider(),
 
             ListTile(
-              title: Text("Log Out"),
+              title: Text("Contact Us"),
               leading: Icon(Icons.email),
             ) //line
 
@@ -185,8 +219,8 @@ class _MyProductsState extends State<MyProducts> {
 
       body: StreamBuilder(
           stream: FirebaseFirestore.instance
-              .collection("colrecipes")
-              .where('userId', isEqualTo: userUid)
+              .collection("Products")
+              .where('ownerId', isEqualTo: ownerUid)
               .get()
               .asStream(),
           builder:
@@ -194,7 +228,7 @@ class _MyProductsState extends State<MyProducts> {
             if (!snapshot.hasData) {
               return Text('"Loading...');
             }
-            print(userUid);
+            print(ownerUid);
             int length = snapshot.data.docs.length;
             return GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -234,7 +268,7 @@ class _MyProductsState extends State<MyProducts> {
                                 ),
                               ),
                               subtitle: Text(
-                                doc.data()["recipe"],
+                                doc.data()["price"],
                                 style: TextStyle(
                                     color: Colors.redAccent, fontSize: 12.0),
                               ),

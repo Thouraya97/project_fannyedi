@@ -1,6 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 
 class MyInfoPage extends StatefulWidget {
   final DocumentSnapshot ds;
@@ -13,29 +13,54 @@ class _MyInfoPageState extends State<MyInfoPage> {
   String productImage;
   String id;
   String name;
-  String recipe;
+  String price;
+  String description;
+  final dbcart = FirebaseFirestore.instance;
+  // final dbuser = FirebaseFirestore.instance;
+  final _formKey = GlobalKey<FormState>();
+  String cartuserID = FirebaseAuth.instance.currentUser.uid;
 
   TextEditingController nameInputController;
-  TextEditingController recipeInputController;
-    
+  TextEditingController priceInputController;
+  TextEditingController descriptionInputController;
+
   Future getPost() async {
     var firestore = FirebaseFirestore.instance;
     QuerySnapshot qn = await firestore.collection("colrecipes").get();
     return qn.docs;
   }
 
-   @override
+  @override
   void initState() {
     super.initState();
-    recipeInputController =
-        new TextEditingController(text: widget.ds.data()["recipes"]);
+    priceInputController =
+        new TextEditingController(text: widget.ds.data()["price"]);
     nameInputController =
         new TextEditingController(text: widget.ds.data()["name"]);
     productImage = widget.ds.data()["image"];
     print(productImage);
+    price = widget.ds.data()["price"];
+    name = widget.ds.data()["name"];
   }
 
-
+  void addToCart() async {
+    
+      DocumentReference ref = await dbcart
+          .collection('User')
+          .doc(cartuserID)
+          .collection('Cart')
+          .add({
+        'name': '$name',
+        'price': '$price',
+        'description': '$description',
+        'image': '$productImage',
+        'cartuserId': cartuserID
+      });
+      setState(() => id = ref.id);
+      Navigator.of(context).pop();
+      
+    
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,10 +87,10 @@ class _MyInfoPageState extends State<MyInfoPage> {
                       child: productImage == ''
                           ? Text('Edit')
                           : Image.network(productImage + '?alt=media'),
-                    ),                    
+                    ),
                   ],
                 ),
-              //  new IniciarIcon(),
+                //  new IniciarIcon(),
                 new ListTile(
                   //leading: const Icon(Icon., color: Colors.black),
                   title: new TextFormField(
@@ -83,26 +108,26 @@ class _MyInfoPageState extends State<MyInfoPage> {
                 new ListTile(
                   leading: const Icon(Icons.list, color: Colors.black),
                   title: new TextFormField(
-                    maxLines: 10,
-                    controller: recipeInputController,
+                    // maxLines: 10,
+                    controller: priceInputController,
                     validator: (value) {
-                      if (value.isEmpty) return "Ingresa un nombre";
+                      if (value.isEmpty) return "Name of product";
                     },
                     decoration: new InputDecoration(
-                        hintText: "description", labelText: "recipe"),
+                        hintText: "price", labelText: "price"),
                   ),
                 ),
+                Text(widget.ds.data()["price"]),
                 Padding(
                   padding: EdgeInsets.only(top: 8.0),
                 ),
-                /*FlatButton(
-                  
-                   Text('Add to cart'),
-                   onPressed: (){
-
-                   },
-                ),*/
-                
+                FlatButton(
+                  child: Text('Add to Cart',style: TextStyle(color: Colors.white),),
+                  color: Colors.black,
+                  onPressed: () {
+                    addToCart();
+                  },
+                ),
               ],
             ),
           ),
@@ -111,7 +136,6 @@ class _MyInfoPageState extends State<MyInfoPage> {
     );
   }
 }
-
 
 class IniciarIcon extends StatelessWidget {
   @override
@@ -134,7 +158,6 @@ class IniciarIcon extends StatelessWidget {
           ),
         ],
       ),
-      
     );
   }
 }
@@ -162,5 +185,3 @@ class IconoMenu extends StatelessWidget {
     );
   }
 }
-
-

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 //import 'package:project_fannyedi/CRUD/viewpage.dart';
-import 'package:project_fannyedi/HomeScreen.dart';
 import 'package:project_fannyedi/viewpage.dart';
 import 'ForgotScreen.dart';
 import 'SignUpScreen.dart';
