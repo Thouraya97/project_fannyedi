@@ -12,6 +12,8 @@ import 'package:carousel_pro/carousel_pro.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:project_fannyedi/Login_Register/User_Profile.dart';
 import 'package:project_fannyedi/CRUD/MyProduct.dart';
+import 'package:project_fannyedi/CRUD/categoryautre.dart';
+import 'package:project_fannyedi/CRUD/categorybracelets.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -106,7 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 )));
   }
 
-  void logOut()  {
+  void logOut() {
     FirebaseAuth.instance.signOut().then((value) {
       Navigator.pushReplacement(context,
           MaterialPageRoute(builder: (BuildContext context) => LogInScreen()));
@@ -121,6 +123,7 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text('Home Page'),
         actions: <Widget>[],
       ),
+
       // image_carousel,
       drawer: Drawer(
         child: Column(
@@ -212,13 +215,27 @@ class _MyHomePageState extends State<MyHomePage> {
             Divider(),
 
             ListTile(
+                title: Text("Category"),
+                leading: Icon(Icons.home),
+                onTap: () {
+                  if (auth.currentUser != null) {
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                            categoryautre(currentEmail)));
+                  }
+                }),
+            Divider(),
+
+            ListTile(
                 title: Text("Log Out"),
                 leading: Icon(Icons.logout),
                 onTap: () {
                   FirebaseAuth.instance.signOut().then((value) {
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (BuildContext context) => LogInScreen()));
-    });
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext context) => LogInScreen()));
+                  });
                 }),
             Divider(),
 
@@ -232,104 +249,141 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
 
-      body: StreamBuilder(
-          stream: FirebaseFirestore.instance.collection("Products").snapshots(),
-          builder:
-              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (!snapshot.hasData) {
-              return Text('"Loading...');
-            }
-            int length = snapshot.data.docs.length;
-            return GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, //two columns
-                  mainAxisSpacing: 0.1, //space the card
-                  childAspectRatio: 0.800, //space largo de cada card
-                ),
-                itemCount: length,
-                padding: EdgeInsets.all(2.0),
-                itemBuilder: (_, int index) {
-                  final DocumentSnapshot doc = snapshot.data.docs[index];
-                  return new Container(
-                    child: Card(
-                      child: Column(
-                        children: <Widget>[
-                          Row(
-                            children: <Widget>[
-                              InkWell(
-                                onTap: () => navigateToDetail(doc),
-                                child: new Container(
-                                  child: Image.network(
-                                    '${doc.data()["image"]}' + '?alt=media',
-                                  ),
-                                  width: 170,
-                                  height: 120,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Expanded(
-                            child: ListTile(
-                              title: Text(
-                                doc.data()["name"],
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 19.0,
-                                ),
-                              ),
-                              subtitle: Text(
-                                doc.data()["price"],
-                                style: TextStyle(
-                                    color: Colors.redAccent, fontSize: 12.0),
-                              ),
-                              onTap: () => navigateToDetail(doc),
-                            ),
-                          ),
-                          Divider(),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: <Widget>[
-                              Container(
-                                child: new Row(
-                                  children: <Widget>[
-                                    IconButton(
-                                      icon: Icon(
-                                        Icons.delete,
-                                        color: Colors.redAccent,
-                                      ),
-                                      onPressed: () =>
-                                          deleteData(doc), //funciona
-                                    ),
-                                    IconButton(
-                                      icon: Icon(
-                                        Icons.remove_red_eye,
-                                        color: Colors.black,
-                                      ),
-                                      onPressed: () => navigateToInfo(doc),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                  );
-                });
-          }),
+      body: Row(
+        // mainAxisAlignment: MainAxisAlignment.spaceEvenly
+        crossAxisAlignment: CrossAxisAlignment.start,
 
-      /* floatingActionButton: FloatingActionButton(
-        child: Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
-        backgroundColor: Colors.pinkAccent,
-        onPressed: () {
-          Route route = MaterialPageRoute(builder: (context) => MyAddPage());
-          Navigator.push(context, route);
-        },
-      ),*/
+        children: <Widget>[
+          RaisedButton(
+            child: Text('Autres', style: TextStyle(color: Colors.white)),
+            color: Colors.redAccent,
+            onPressed: () {
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                          categoryautre(currentEmail)));
+            },
+          ),
+          RaisedButton(
+            child: Text('bracelets', style: TextStyle(color: Colors.white)),
+            color: Colors.redAccent,
+            onPressed: () {
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                          categorybracelets(currentEmail)));
+            },
+          ),
+          Expanded(
+            child: Column(
+              children: <Widget>[
+                StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection("Products")
+                        .snapshots(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (!snapshot.hasData) {
+                        return Text('"Loading...');
+                      }
+                      int length = snapshot.data.docs.length;
+                      return Container(
+                        width: double.infinity,
+                        height: double.infinity,
+                        child: GridView.builder(
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2, //two columns
+                              mainAxisSpacing: 0.1, //space the card
+                              childAspectRatio:
+                                  0.800, //space largo de cada card
+                            ),
+                            itemCount: length,
+                            padding: EdgeInsets.all(2.0),
+                            itemBuilder: (_, int index) {
+                              final DocumentSnapshot doc =
+                                  snapshot.data.docs[index];
+                              return new Container(
+                                child: Card(
+                                  child: Column(
+                                    children: <Widget>[
+                                      Row(
+                                        children: <Widget>[
+                                          InkWell(
+                                            onTap: () => navigateToDetail(doc),
+                                            child: new Container(
+                                              child: Image.network(
+                                                '${doc.data()["image"]}' +
+                                                    '?alt=media',
+                                              ),
+                                              width: 170,
+                                              height: 120,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Expanded(
+                                        child: ListTile(
+                                          title: Text(
+                                            doc.data()["name"],
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 19.0,
+                                            ),
+                                          ),
+                                          subtitle: Text(
+                                            doc.data()["price"],
+                                            style: TextStyle(
+                                                color: Colors.redAccent,
+                                                fontSize: 12.0),
+                                          ),
+                                          onTap: () => navigateToDetail(doc),
+                                        ),
+                                      ),
+                                      Divider(),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        children: <Widget>[
+                                          Container(
+                                            child: new Row(
+                                              children: <Widget>[
+                                                IconButton(
+                                                  icon: Icon(
+                                                    Icons.delete,
+                                                    color: Colors.redAccent,
+                                                  ),
+                                                  onPressed: () => deleteData(
+                                                      doc), //funciona
+                                                ),
+                                                IconButton(
+                                                  icon: Icon(
+                                                    Icons.remove_red_eye,
+                                                    color: Colors.black,
+                                                  ),
+                                                  onPressed: () =>
+                                                      navigateToInfo(doc),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }),
+                      );
+                    }),
+              ],
+            ),
+          ),
+        ],
+      ),
+
       bottomNavigationBar: CurvedNavigationBar(
         color: Color(0xffC90327),
         backgroundColor: Colors.white,
