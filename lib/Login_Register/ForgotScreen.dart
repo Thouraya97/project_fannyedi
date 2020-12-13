@@ -1,12 +1,9 @@
-//import 'package:firebase_auth/firebase_auth.dart';
-//import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class ForgotScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     return _ForgotScreen();
   }
 }
@@ -16,7 +13,6 @@ class _ForgotScreen extends State<ForgotScreen> {
   var _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -81,7 +77,7 @@ class _ForgotScreen extends State<ForgotScreen> {
                           FirebaseAuth.instance
                               .sendPasswordResetEmail(email: email)
                               .then((value) => print("Check your mails"));
-                        }//comment
+                        }
                       },
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),

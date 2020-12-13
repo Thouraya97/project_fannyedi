@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart'; //formateo hora
+import 'package:intl/intl.dart'; 
 
 File image;
 String filename;
@@ -28,6 +28,34 @@ class _MyUpdatePageState extends State<MyUpdatePage> {
   String name;
   String price;
   String description;
+
+  void updateData() async {
+     DateTime now = DateTime.now();
+                  String nuevoformato =
+                      DateFormat('kk:mm:ss:MMMMd').format(now);
+                  var fullImageName = 'nomfoto-$nuevoformato' + '.jpg';
+                  var fullImageName2 = 'nomfoto-$nuevoformato' + '.jpg';
+
+                  final Reference ref =
+                      FirebaseStorage.instance.ref().child(fullImageName);
+                  final UploadTask task = ref.putFile(image);
+
+                  var part1 =
+                      'https://firebasestorage.googleapis.com/v0/b/fannyedi-b1af6.appspot.com/o/'; 
+
+                  var fullPathImage = part1 + fullImageName2;
+                  print(fullPathImage);
+                  FirebaseFirestore.instance
+                      .collection('colrecipes')
+                      .doc(widget.ds.id)
+                      .update({
+                    'name': nameInputController.text,
+                    'recipe': priceInputController.text,
+                    'image': '$fullPathImage'
+                  });
+                  Navigator.of(context).pop(); 
+
+  }
 
   pickerCam() async {
     File img = await ImagePicker.pickImage(source: ImageSource.camera);
@@ -64,26 +92,14 @@ class _MyUpdatePageState extends State<MyUpdatePage> {
         new TextEditingController(text: widget.ds.data()["name"]);
          descriptionInputController =
         new TextEditingController(text: widget.ds.data()["description"]);
-    productImage = widget.ds.data()["image"]; //nuevo
-    print(productImage); //nuevo
+    productImage = widget.ds.data()["image"]; 
+    print(productImage); 
   }
 
-  /*
-  updateData(selectedDoc, newValues) {
-    Firestore.instance
-        .collection('colrecipes')
-        .document(selectedDoc)
-        .updateData(newValues)
-        .catchError((e) {
-      // print(e);
-    });
-  }
-  */
 
   Future getPosts() async {
     var firestore = FirebaseFirestore.instance;
     QuerySnapshot qn = await firestore.collection("Products").get();
-    // print();
     return qn.docs;
   }
 
@@ -193,32 +209,10 @@ class _MyUpdatePageState extends State<MyUpdatePage> {
             children: <Widget>[
               RaisedButton(
                 child: Text('Update'),
+               
+                   color: Colors.black,
                 onPressed: () {
-                  DateTime now = DateTime.now();
-                  String nuevoformato =
-                      DateFormat('kk:mm:ss:MMMMd').format(now);
-                  var fullImageName = 'nomfoto-$nuevoformato' + '.jpg';
-                  var fullImageName2 = 'nomfoto-$nuevoformato' + '.jpg';
-
-                  final Reference ref =
-                      FirebaseStorage.instance.ref().child(fullImageName);
-                  final UploadTask task = ref.putFile(image);
-
-                  var part1 =
-                      'https://firebasestorage.googleapis.com/v0/b/fannyedi-b1af6.appspot.com/o/'; //esto cambia segun su firestore
-
-                  var fullPathImage = part1 + fullImageName2;
-                  print(fullPathImage);
-                  FirebaseFirestore.instance
-                      .collection('colrecipes')
-                      .doc(widget.ds.id)
-                      .update({
-                    'name': nameInputController.text,
-                    'recipe': priceInputController.text,
-                    'image': '$fullPathImage'
-                  });
-                  Navigator.of(context).pop(); //regrese a la pantalla anterior
-                },
+                   updateData();              },
               ),
             ],
           )

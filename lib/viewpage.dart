@@ -6,8 +6,6 @@ import 'package:project_fannyedi/CRUD/informationPage.dart';
 import 'package:project_fannyedi/CRUD/updatepage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'Login_Register/LogInScreen.dart';
-//import 'Login_Register/Profile.dart';
-
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:project_fannyedi/Login_Register/User_Profile.dart';
@@ -18,20 +16,6 @@ void main() {
     home: MyApp(),
   ));
 }
-
-/*class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return new MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'View Page',
-      theme: new ThemeData(
-        primarySwatch: Colors.pink,
-      ),
-      home: new MyHomePage(),
-    );
-  }
-}*/
 
 class CommonThings {
   static Size size;
@@ -49,44 +33,62 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   String currentEmail;
   FirebaseAuth auth = FirebaseAuth.instance;
+  String uid = FirebaseAuth.instance.currentUser.uid;
 
   int _page = 0;
   Future<void> Goto() async {
     if (auth.currentUser != null) {
       Navigator.of(context).pushReplacement(MaterialPageRoute(
-          /*builder: (BuildContext context) => HomeScreen(value.email))*/
           builder: (BuildContext context) =>
               MyHomePage(auth.currentUser.email)));
     }
   }
 
-  /// TextEditingController recipeInputController;
-  //TextEditingController nameInputController;
+  int pageIndex = 0;
   String id;
   final db = FirebaseFirestore.instance;
-  final MyAddPage add = MyAddPage();
-  Widget _showPage = new MyAddPage();
+  final MyAddPage _add = new MyAddPage();
+  final MyProducts _myproducts =
+      new MyProducts(FirebaseAuth.instance.currentUser.email);
+  final ProfileScreen _profile = new ProfileScreen();
+  final MyCart _chariot = new MyCart(FirebaseAuth.instance.currentUser.email);
+  final MyHomePage _home =
+      new MyHomePage(FirebaseAuth.instance.currentUser.email);
+  //final
+  Widget _showPage = new MyHomePage(FirebaseAuth.instance.currentUser.email);
   Widget _pageChooser(int page) {
     switch (page) {
+      case 0:
+        return _home;
+        break;
+
+      case 1:
+        return _myproducts;
+        break;
+
       case 2:
-        return add;
+        return _add;
+        break;
+
+      case 3:
+        return _chariot;
+        break;
+
+      case 5:
+        return _profile;
+        break;
     }
   }
 
-  // final ProfileScreen profile = ProfileScreen();
-
-  //final _formKey = GlobalKey<FormState>();
   String name;
   String product;
   _MyHomePageState(this.currentEmail);
 
-  //create function for delete one register
   void deleteData(DocumentSnapshot doc) async {
     await db.collection('Products').doc(doc.id).delete();
     setState(() => id = null);
   }
 
-  //create tha funtion navigateToDetail
   navigateToDetail(DocumentSnapshot ds) {
     Navigator.push(
         context,
@@ -96,7 +98,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 )));
   }
 
-  //create tha funtion navigateToDetail
   navigateToInfo(DocumentSnapshot ds) {
     Navigator.push(
         context,
@@ -106,7 +107,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 )));
   }
 
-  void logOut()  {
+  void logOut() {
     FirebaseAuth.instance.signOut().then((value) {
       Navigator.pushReplacement(context,
           MaterialPageRoute(builder: (BuildContext context) => LogInScreen()));
@@ -165,12 +166,9 @@ class _MyHomePageState extends State<MyHomePage> {
               onTap: () {
                 if (auth.currentUser != null) {
                   Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      /*builder: (BuildContext context) => HomeScreen(value.email))*/
                       builder: (BuildContext context) =>
                           MyProducts(auth.currentUser.email)));
                 }
-
-                ///  Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => MyProducts()));
               },
             ),
             ListTile(
@@ -179,12 +177,9 @@ class _MyHomePageState extends State<MyHomePage> {
               onTap: () {
                 if (auth.currentUser != null) {
                   Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      /*builder: (BuildContext context) => HomeScreen(value.email))*/
                       builder: (BuildContext context) =>
                           MyCart(auth.currentUser.email)));
                 }
-
-                ///  Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => MyProducts()));
               },
             ),
 
@@ -216,9 +211,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 leading: Icon(Icons.logout),
                 onTap: () {
                   FirebaseAuth.instance.signOut().then((value) {
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (BuildContext context) => LogInScreen()));
-    });
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext context) => LogInScreen()));
+                  });
                 }),
             Divider(),
 
@@ -244,7 +241,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2, //two columns
                   mainAxisSpacing: 0.1, //space the card
-                  childAspectRatio: 0.800, //space largo de cada card
+                  childAspectRatio: 0.800,
                 ),
                 itemCount: length,
                 padding: EdgeInsets.all(2.0),
@@ -292,14 +289,15 @@ class _MyHomePageState extends State<MyHomePage> {
                               Container(
                                 child: new Row(
                                   children: <Widget>[
-                                    IconButton(
-                                      icon: Icon(
-                                        Icons.delete,
-                                        color: Colors.redAccent,
-                                      ),
-                                      onPressed: () =>
-                                          deleteData(doc), //funciona
-                                    ),
+                                    uid == doc.data()["ownerId"]
+                                        ? IconButton(
+                                            icon: Icon(
+                                              Icons.delete,
+                                              color: Colors.redAccent,
+                                            ),
+                                            onPressed: () => deleteData(doc),
+                                          )
+                                        : Container(),
                                     IconButton(
                                       icon: Icon(
                                         Icons.remove_red_eye,
@@ -319,41 +317,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 });
           }),
 
-      /* floatingActionButton: FloatingActionButton(
-        child: Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
-        backgroundColor: Colors.pinkAccent,
-        onPressed: () {
-          Route route = MaterialPageRoute(builder: (context) => MyAddPage());
-          Navigator.push(context, route);
-        },
-      ),*/
-      bottomNavigationBar: CurvedNavigationBar(
-        color: Color(0xffC90327),
-        backgroundColor: Colors.white,
-        buttonBackgroundColor: Color(0xffC90327),
-        items: <Widget>[
-          Icon(
-            Icons.home,
-            size: 30,
-            color: Colors.white,
-          ),
-          Icon(Icons.favorite, size: 30, color: Colors.white),
-          Icon(Icons.add_business, size: 30, color: Colors.white),
-          Icon(Icons.local_grocery_store, size: 30, color: Colors.white),
-          Icon(Icons.person, size: 30, color: Colors.white),
-        ],
-        animationCurve: Curves.bounceInOut,
-        animationDuration: Duration(milliseconds: 200),
-        onTap: (tappedIndex) {
-          setState(() {
-            // if (index == 2) {
-            _showPage = _pageChooser(tappedIndex);
-          });
-        },
-      ),
-    );
+       );
   }
 }

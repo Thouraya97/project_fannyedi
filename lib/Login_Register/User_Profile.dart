@@ -1,9 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-//import 'package:e_commerce/model/usermodel.dart';
-//import 'package:e_commerce/screens/homepage.dart';
-//import 'package:e_commerce/widgets/mybutton.dart';
-//import 'package:e_commerce/widgets/mytextformField.dart';
-//import 'package:e_commerce/widgets/notification_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:project_fannyedi/Model/User.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +35,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           content: Text("Name Is Empty "),
         ),
       );
-    } else if (userName.text.length < 6) {
+    } else if (userName.text.length < 4) {
       _scaffoldKey.currentState.showSnackBar(
         SnackBar(
           content: Text("Name Must Be 6 "),
@@ -74,17 +69,11 @@ final  String userUid=FirebaseAuth.instance.currentUser.uid;
   Future<String> _uploadImage({File image}) async {
     Reference storageReference =
         FirebaseStorage.instance.ref().child("UserImage/$userUid");
-    UploadTask uploadTask = storageReference.putFile(image);
-    //TaskSnapshot snapshot = await uploadTask.onComplete;
     String imageUrl = await storageReference.getDownloadURL();
     return imageUrl;
   }
 
-  void getUserUid() {
-    User myUser = FirebaseAuth.instance.currentUser;
-   // userUid = myUser.uid;
-  }
-
+ 
   bool centerCircle = false;
   var imageMap;
   void userDetailUpdate() async {
@@ -149,11 +138,7 @@ final  String userUid=FirebaseAuth.instance.currentUser.uid;
     address = TextEditingController(text: userModel.userAddress);
     userName = TextEditingController(text: userModel.userName);
     phoneNumber = TextEditingController(text: userModel.userPhoneNumber);
-    /*if (userModel.userGender == "Male") {
-      isMale = true;
-    } else {
-      isMale = false;
-    }*/
+   
     return Container(
       height: double.infinity,
       width: double.infinity,
@@ -168,10 +153,6 @@ final  String userUid=FirebaseAuth.instance.currentUser.uid;
             endText: userModel.userEmail,
             startText: "Email",
           ),
-         /* _buildSingleContainer(
-            endText: userModel.userGender,
-            startText: "Gender",
-          ),*/
           _buildSingleContainer(
             endText: userModel.userPhoneNumber,
             startText: "Phone Number",
@@ -260,7 +241,6 @@ final  String userUid=FirebaseAuth.instance.currentUser.uid;
 
   @override
   Widget build(BuildContext context) {
-    getUserUid();
     return Scaffold(
       resizeToAvoidBottomInset: true,
       key: _scaffoldKey,

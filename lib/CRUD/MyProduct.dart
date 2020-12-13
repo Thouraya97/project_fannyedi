@@ -320,7 +320,7 @@ class _MyProductsState extends State<MyProducts> {
           Navigator.push(context, route);
         },
       ),*/
-      bottomNavigationBar: CurvedNavigationBar(
+     /* bottomNavigationBar: CurvedNavigationBar(
         color: Color(0xffC90327),
         backgroundColor: Colors.white,
         buttonBackgroundColor: Color(0xffC90327),
@@ -343,7 +343,7 @@ class _MyProductsState extends State<MyProducts> {
             _showPage = _pageChooser(tappedIndex);
           });
         },
-      ),
+      ),*/
     );
   }
 }

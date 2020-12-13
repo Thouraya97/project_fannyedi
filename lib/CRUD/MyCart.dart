@@ -6,9 +6,7 @@ import 'package:project_fannyedi/CRUD/updatepage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:project_fannyedi/viewpage.dart';
 import '../Login_Register/LogInScreen.dart';
-//import 'Login_Register/Profile.dart';
 import 'package:carousel_pro/carousel_pro.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:project_fannyedi/Login_Register/User_Profile.dart';
 import 'package:project_fannyedi/CRUD/MyProduct.dart';
 
@@ -18,19 +16,6 @@ void main() {
   ));
 }
 
-/*class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return new MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'View Page',
-      theme: new ThemeData(
-        primarySwatch: Colors.pink,
-      ),
-      home: new MyHomePage(),
-    );
-  }
-}*/
 
 class CommonThings {
   static Size size;
@@ -49,44 +34,28 @@ class _MyCartState extends State<MyCart> {
   String currentEmail;
   FirebaseAuth auth = FirebaseAuth.instance;
  String uidc=FirebaseAuth.instance.currentUser.uid;
+  String uid = FirebaseAuth.instance.currentUser.uid;
 
-  int _page = 0;
   Future<void> Goto() async {
     if (auth.currentUser != null) {
       Navigator.of(context).pushReplacement(MaterialPageRoute(
-          /*builder: (BuildContext context) => HomeScreen(value.email))*/
           builder: (BuildContext context) =>
               MyCart(auth.currentUser.email)));
     }
   }
 
-  /// TextEditingController recipeInputController;
-  //TextEditingController nameInputController;
+  
   String id;
   final db = FirebaseFirestore.instance;
-  final MyAddPage add = MyAddPage();
-  Widget _showPage = new MyAddPage();
-  Widget _pageChooser(int page) {
-    switch (page) {
-      case 2:
-        return add;
-    }
-  }
-
-  // final ProfileScreen profile = ProfileScreen();
-
-  //final _formKey = GlobalKey<FormState>();
   String name;
   String product;
   _MyCartState(this.currentEmail);
 
-  //create function for delete one register
   void deleteData(DocumentSnapshot doc) async {
     await db.collection('Products').doc(doc.id).delete();
     setState(() => id = null);
   }
 
-  //create tha funtion navigateToDetail
   navigateToDetail(DocumentSnapshot ds) {
     Navigator.push(
         context,
@@ -96,7 +65,6 @@ class _MyCartState extends State<MyCart> {
                 )));
   }
 
-  //create tha funtion navigateToDetail
   navigateToInfo(DocumentSnapshot ds) {
     Navigator.push(
         context,
@@ -165,12 +133,10 @@ class _MyCartState extends State<MyCart> {
               onTap: () {
                 if (auth.currentUser != null) {
                   Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      /*builder: (BuildContext context) => HomeScreen(value.email))*/
                       builder: (BuildContext context) =>
                           MyProducts(auth.currentUser.email)));
                 }
 
-                ///  Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => MyProducts()));
               },
             ),
              ListTile(
@@ -179,12 +145,10 @@ class _MyCartState extends State<MyCart> {
               onTap: () {
                 if (auth.currentUser != null) {
                   Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      /*builder: (BuildContext context) => HomeScreen(value.email))*/
                       builder: (BuildContext context) =>
                           MyCart(auth.currentUser.email)));
                 }
 
-                ///  Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => MyProducts()));
               },
             ),
 
@@ -244,7 +208,7 @@ class _MyCartState extends State<MyCart> {
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2, //two columns
                   mainAxisSpacing: 0.1, //space the card
-                  childAspectRatio: 0.800, //space largo de cada card
+                  childAspectRatio: 0.800, 
                 ),
                 itemCount: length,
                 padding: EdgeInsets.all(2.0),
@@ -292,14 +256,16 @@ class _MyCartState extends State<MyCart> {
                               Container(
                                 child: new Row(
                                   children: <Widget>[
-                                    IconButton(
+                                    uid==doc.data()["ownerId"]
+                                   ? IconButton(
                                       icon: Icon(
                                         Icons.delete,
                                         color: Colors.redAccent,
                                       ),
                                       onPressed: () =>
-                                          deleteData(doc), //funciona
-                                    ),
+                                          deleteData(doc), 
+                                    )
+                                    :Container(),
                                     IconButton(
                                       icon: Icon(
                                         Icons.remove_red_eye,
@@ -319,41 +285,6 @@ class _MyCartState extends State<MyCart> {
                 });
           }),
 
-      /* floatingActionButton: FloatingActionButton(
-        child: Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
-        backgroundColor: Colors.pinkAccent,
-        onPressed: () {
-          Route route = MaterialPageRoute(builder: (context) => MyAddPage());
-          Navigator.push(context, route);
-        },
-      ),*/
-      bottomNavigationBar: CurvedNavigationBar(
-        color: Color(0xffC90327),
-        backgroundColor: Colors.white,
-        buttonBackgroundColor: Color(0xffC90327),
-        items: <Widget>[
-          Icon(
-            Icons.home,
-            size: 30,
-            color: Colors.white,
-          ),
-          Icon(Icons.favorite, size: 30, color: Colors.white),
-          Icon(Icons.add_business, size: 30, color: Colors.white),
-          Icon(Icons.local_grocery_store, size: 30, color: Colors.white),
-          Icon(Icons.person, size: 30, color: Colors.white),
-        ],
-        animationCurve: Curves.bounceInOut,
-        animationDuration: Duration(milliseconds: 200),
-        onTap: (tappedIndex) {
-          setState(() {
-            // if (index == 2) {
-            _showPage = _pageChooser(tappedIndex);
-          });
-        },
-      ),
     );
   }
 }

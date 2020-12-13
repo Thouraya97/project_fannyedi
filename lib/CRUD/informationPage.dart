@@ -16,9 +16,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
   String price;
   String description;
   final dbcart = FirebaseFirestore.instance;
-  // final dbuser = FirebaseFirestore.instance;
-  final _formKey = GlobalKey<FormState>();
-  String cartuserID = FirebaseAuth.instance.currentUser.uid;
+   String cartuserID = FirebaseAuth.instance.currentUser.uid;
 
   TextEditingController nameInputController;
   TextEditingController priceInputController;
@@ -90,9 +88,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
                     ),
                   ],
                 ),
-                //  new IniciarIcon(),
                 new ListTile(
-                  //leading: const Icon(Icon., color: Colors.black),
                   title: new TextFormField(
                     controller: nameInputController,
                     validator: (value) {
@@ -106,9 +102,8 @@ class _MyInfoPageState extends State<MyInfoPage> {
                   padding: EdgeInsets.only(top: 8.0),
                 ),
                 new ListTile(
-                  leading: const Icon(Icons.list, color: Colors.black),
+                  
                   title: new TextFormField(
-                    // maxLines: 10,
                     controller: priceInputController,
                     validator: (value) {
                       if (value.isEmpty) return "Name of product";
@@ -121,9 +116,10 @@ class _MyInfoPageState extends State<MyInfoPage> {
                 Padding(
                   padding: EdgeInsets.only(top: 8.0),
                 ),
-                FlatButton(
+                RaisedButton(
                   child: Text('Add to Cart',style: TextStyle(color: Colors.white),),
                   color: Colors.black,
+                   
                   onPressed: () {
                     addToCart();
                   },

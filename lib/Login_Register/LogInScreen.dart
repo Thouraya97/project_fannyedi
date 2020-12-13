@@ -2,8 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-//import 'package:project_fannyedi/CRUD/viewpage.dart';
 import 'package:project_fannyedi/viewpage.dart';
+import '../firstScreen.dart';
 import 'ForgotScreen.dart';
 import 'SignUpScreen.dart';
 
@@ -55,8 +55,7 @@ try {
   await auth.signInWithEmailAndPassword(
       email: email.trim(), password: password.trim()).then((value) {
      Navigator.pushReplacement(context, MaterialPageRoute(
-       //  builder: (BuildContext context) => HomeScreen(value.user.email)
-       builder: (BuildContext context) => MyHomePage(value.user.email)
+       builder: (BuildContext context) => MyFirst(value.user.email)
      ));
   });
 }catch(e){
@@ -89,7 +88,7 @@ try {
     Future(() async{
       if( auth.currentUser!=null){
         Navigator.pushReplacement(context, MaterialPageRoute(
-            builder: (BuildContext context) => MyHomePage(auth.currentUser.toString())));
+            builder: (BuildContext context) => MyFirst(auth.currentUser.toString())));
       }
     }
 
@@ -272,7 +271,7 @@ try {
                 onPressed: (){
                   Future<String> user= _GoogleSignIn();
                   if(signInState){
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context)=>MyHomePage(user.toString())));
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context)=>MyFirst(user.toString())));
                   }
                 },
                 color: Colors.white,
@@ -283,7 +282,6 @@ try {
 
                 child: Row(
                   children: <Widget>[
-                    //we need to import font awesome
                     Icon(FontAwesomeIcons.google,color: Colors.green,),
                     SizedBox(width: 10,),
                     Text("Sign in with google",style: TextStyle(

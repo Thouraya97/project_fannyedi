@@ -18,7 +18,6 @@ class _onBoarding3 extends State<onBoarding3> {
   
 @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
       backgroundColor: Color(0xffC90327),
       body: Container(

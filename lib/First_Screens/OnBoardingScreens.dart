@@ -1,6 +1,5 @@
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'onBoardingScreen1.dart';
 import 'onBoardingScreen2.dart';
 import 'onBoardingScreen3.dart';

@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart'; //formateo hora
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../firstScreen.dart';
 import '../viewpage.dart';
 
 
@@ -48,12 +49,10 @@ class _MyAddPageState extends State<MyAddPage> {
 
   TextEditingController imageInputController;
   FirebaseAuth auth = FirebaseAuth.instance;
-  //final userId=currentUser().uid ;
 
   
   String id;
   String idp;
-  //final FirebaseUser user = await auth.currentUser();
   final db = FirebaseFirestore.instance;
   final dbuser = FirebaseFirestore.instance;
   final _formKey = GlobalKey<FormState>();
@@ -115,12 +114,10 @@ class _MyAddPageState extends State<MyAddPage> {
         'ownerId': ownerID
       });
       setState(() => id = ref.id);
-     // Navigator.of(context).pop(); 
        if (auth.currentUser != null) {
                   Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      /*builder: (BuildContext context) => HomeScreen(value.email))*/
                       builder: (BuildContext context) =>
-                          MyHomePage(auth.currentUser.email)));
+                          MyFirst(auth.currentUser.email)));
     }
     }
      }
@@ -216,9 +213,11 @@ class _MyAddPageState extends State<MyAddPage> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               RaisedButton(
+                
                 onPressed: createData,
-                child: Text('Create', style: TextStyle(color: Colors.white)),
+                child: Text('Create', style: TextStyle(color: Colors.white),),
                 color: Colors.black,
+                
               ),
             ],
           )

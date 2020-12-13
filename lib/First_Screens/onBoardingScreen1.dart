@@ -17,7 +17,6 @@ class _onBoarding1 extends State<onBoarding1> {
   
 @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
       backgroundColor: Color(0xffC90327),
       body: Container(
@@ -26,7 +25,7 @@ class _onBoarding1 extends State<onBoarding1> {
         ),
          )
               ),
-        //floatingActionButton: ,
+      
     
     );
   }

@@ -1,25 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-//import 'package:project_fannyedi/CRUD/viewpage.dart';
-import 'LogInScreen.dart';
+import '../firstScreen.dart';
 import 'LogInScreen.dart';
 import 'package:project_fannyedi/viewpage.dart';
 
 class SignUpScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     return _SignUpScreen();
   }
 }
 
 class _SignUpScreen extends State<SignUpScreen> {
   bool authState = false;
-  //final dbuser = Firestore.instance;
   String Idu;
-  // String email = "", password = "";
   var _formKey = GlobalKey<FormState>();
   final TextEditingController email = TextEditingController();
   final TextEditingController userName = TextEditingController();
@@ -27,8 +22,6 @@ class _SignUpScreen extends State<SignUpScreen> {
   final TextEditingController password = TextEditingController();
   final TextEditingController address = TextEditingController();
   FirebaseAuth auth = FirebaseAuth.instance;
-//Firestore _firestore = Firestore.instance;
-//CollectionReference _stocks = _firestore.collection('stocks');
   Future<void> register() async {
     await auth
         .createUserWithEmailAndPassword(
@@ -37,7 +30,7 @@ class _SignUpScreen extends State<SignUpScreen> {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (BuildContext context) => MyHomePage(value.user.email)));
+              builder: (BuildContext context) => MyFirst(value.user.email)));
     });
   final user = auth.currentUser;
     final userID = user.uid;
@@ -45,24 +38,17 @@ class _SignUpScreen extends State<SignUpScreen> {
 
     FirebaseFirestore.instance.collection("User").doc(userID).set({
       "UserName": userName.text,
-      //"UserId":userID,
       "UserEmail": email.text,
       "UserAddress": address.text,
-      // "UserGender": isMale == true ? "Male" : "Female",
       "UserNumber": phoneNumber.text,
       "UserId":userID,
     });
-    //setState(() => Idu = refUser.documentID);
-
-    //FirebaseFirestore.instance.collection("User").doc(result1.user.uid).set();
   }
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
       backgroundColor: Colors.white,
-      //change column to listview
       body: Form(
         key: _formKey,
         child: ListView(
