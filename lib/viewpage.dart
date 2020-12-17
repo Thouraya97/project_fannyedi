@@ -5,6 +5,7 @@ import 'package:project_fannyedi/CRUD/addpage.dart';
 import 'package:project_fannyedi/CRUD/informationPage.dart';
 import 'package:project_fannyedi/CRUD/updatepage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'DataSearch.dart';
 import 'Login_Register/LogInScreen.dart';
 //import 'Login_Register/Profile.dart';
 
@@ -21,19 +22,6 @@ void main() {
   ));
 }
 
-/*class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return new MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'View Page',
-      theme: new ThemeData(
-        primarySwatch: Colors.pink,
-      ),
-      home: new MyHomePage(),
-    );
-  }
-}*/
 
 class CommonThings {
   static Size size;
@@ -78,7 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
   // final ProfileScreen profile = ProfileScreen();
 
   //final _formKey = GlobalKey<FormState>();
-  String name;
+  //String name;
   String product;
   _MyHomePageState(this.currentEmail);
 
@@ -121,9 +109,21 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         backgroundColor: Color(0xffC90327),
         title: Text('Home Page'),
-        actions: <Widget>[],
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () {
+             // showSearch(context: context, delegate: DataSearch());
+              Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+                return CloudFirestoreSearch(currentEmail);
+                }));
+            },
+            
+          ),      
+        ],
       ),
-
+    
+        
       // image_carousel,
       drawer: Drawer(
         child: Column(
@@ -277,109 +277,101 @@ class _MyHomePageState extends State<MyHomePage> {
             },
           ),
           Expanded(
-            child: Column(
-              children: <Widget>[
-                StreamBuilder(
-                    stream: FirebaseFirestore.instance
-                        .collection("Products")
-                        .snapshots(),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<QuerySnapshot> snapshot) {
-                      if (!snapshot.hasData) {
-                        return Text('"Loading...');
-                      }
-                      int length = snapshot.data.docs.length;
-                      return Container(
-                        width: double.infinity,
-                        height: double.infinity,
-                        child: GridView.builder(
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2, //two columns
-                              mainAxisSpacing: 0.1, //space the card
-                              childAspectRatio:
-                                  0.800, //space largo de cada card
-                            ),
-                            itemCount: length,
-                            padding: EdgeInsets.all(2.0),
-                            itemBuilder: (_, int index) {
-                              final DocumentSnapshot doc =
-                                  snapshot.data.docs[index];
-                              return new Container(
-                                child: Card(
-                                  child: Column(
-                                    children: <Widget>[
-                                      Row(
-                                        children: <Widget>[
-                                          InkWell(
-                                            onTap: () => navigateToDetail(doc),
-                                            child: new Container(
-                                              child: Image.network(
-                                                '${doc.data()["image"]}' +
-                                                    '?alt=media',
-                                              ),
-                                              width: 170,
-                                              height: 120,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Expanded(
-                                        child: ListTile(
-                                          title: Text(
-                                            doc.data()["name"],
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 19.0,
-                                            ),
-                                          ),
-                                          subtitle: Text(
-                                            doc.data()["price"],
-                                            style: TextStyle(
-                                                color: Colors.redAccent,
-                                                fontSize: 12.0),
-                                          ),
-                                          onTap: () => navigateToDetail(doc),
+            child: StreamBuilder(
+                stream: FirebaseFirestore.instance
+                    .collection("Products")
+                    .snapshots(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                  if (!snapshot.hasData) {
+                    return Text('"Loading...');
+                  }
+                  int length = snapshot.data.docs.length;
+                  return Container(
+                    width: double.infinity,
+                    height: double.infinity,
+                    child: GridView.builder(
+                        gridDelegate:
+                            SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2, //two columns
+                          mainAxisSpacing: 0.1, //space the card
+                          childAspectRatio:
+                              0.5, //space largo de cada card
+                        ),
+                        itemCount: length,
+                        padding: EdgeInsets.all(2.0),
+                        itemBuilder: (_, int index) {
+                          final DocumentSnapshot doc =
+                              snapshot.data.docs[index];
+                          return new Container(
+                            child: Card(
+                              child: Column(
+                                children: <Widget>[
+                                  Flexible(
+                                    child: InkWell(
+                                      onTap: () => navigateToDetail(doc),
+                                      child: new Container(
+                                        child: Image.network(
+                                          '${doc.data()["image"]}' +
+                                              '?alt=media',
                                         ),
                                       ),
-                                      Divider(),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        children: <Widget>[
-                                          Container(
-                                            child: new Row(
-                                              children: <Widget>[
-                                                IconButton(
-                                                  icon: Icon(
-                                                    Icons.delete,
-                                                    color: Colors.redAccent,
-                                                  ),
-                                                  onPressed: () => deleteData(
-                                                      doc), //funciona
-                                                ),
-                                                IconButton(
-                                                  icon: Icon(
-                                                    Icons.remove_red_eye,
-                                                    color: Colors.black,
-                                                  ),
-                                                  onPressed: () =>
-                                                      navigateToInfo(doc),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    ],
+                                    ),
                                   ),
-                                ),
-                              );
-                            }),
-                      );
-                    }),
-              ],
-            ),
+                                  Expanded(
+                                    child: ListTile(
+                                      title: Text(
+                                        doc.data()["name"],
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 19.0,
+                                        ),
+                                      ),
+                                      subtitle: Text(
+                                        doc.data()["price"],
+                                        style: TextStyle(
+                                            color: Colors.redAccent,
+                                            fontSize: 12.0),
+                                      ),
+                                      onTap: () => navigateToDetail(doc),
+                                    ),
+                                  ),
+                                  Divider(),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: <Widget>[
+                                      Container(
+                                        child: new Row(
+                                          children: <Widget>[
+                                            IconButton(
+                                              icon: Icon(
+                                                Icons.delete,
+                                                color: Colors.redAccent,
+                                              ),
+                                              onPressed: () => deleteData(
+                                                  doc), //funciona
+                                            ),
+                                            IconButton(
+                                              icon: Icon(
+                                                Icons.remove_red_eye,
+                                                color: Colors.black,
+                                              ),
+                                              onPressed: () =>
+                                                  navigateToInfo(doc),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ),
+                          );
+                        }),
+                  );
+                }),
           ),
         ],
       ),

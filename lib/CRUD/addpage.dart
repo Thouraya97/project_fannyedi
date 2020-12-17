@@ -219,44 +219,7 @@ class _MyAddPageState extends State<MyAddPage> {
                     onSaved: (value) => description = value,
                   ),
                 ),
-           /*  SizedBox(width: 50.0),
-                  DropdownButton(
-                    items: category
-                        .map((value) => DropdownMenuItem(
-                              child: Text(
-                                value,
-                                style: TextStyle(color: Color(0xff11b719)),
-                              ),
-                              value: value,
-                            ))
-                        .toList(),
-                   onChanged: (selectedAccountType) {
-                    
-                     /*   final snackBar = SnackBar(
-                                content: Text(
-                                  'Selected Category  is $selectedAccountType',
-                                  style: TextStyle(color: Color(0xff11b719)),
-                                ),
-                              );
-                              Scaffold.of(context).showSnackBar(snackBar);*/
-                      setState(() {
-                        selectedType = selectedAccountType;
-                          print('$selectedType');
-                      });
-                     
-                    },
-                    value: selectedType,
-                    isExpanded: false,
-                    hint: Text(
-                      'Choose category Type',
-                      style: TextStyle(color: Color(0xff11b719)),
-                    ),
-                  )
-              ],
-            ),
-          ),
-          */
-            SizedBox(height: 40.0),
+                 SizedBox(height: 40.0),
               StreamBuilder<QuerySnapshot>(
                   stream: Firestore.instance.collection("category").snapshots(),
                   builder: (context, snapshot) {
@@ -300,7 +263,8 @@ class _MyAddPageState extends State<MyAddPage> {
                               "Choose Category  Type",
                             style: TextStyle( 
                               color: (
-                                Colors.black)
+                                Colors.black
+                                )
                                 ),
                                             
                                             ),
@@ -313,6 +277,44 @@ class _MyAddPageState extends State<MyAddPage> {
               ],
             ),
           ),
+           /*  SizedBox(width: 50.0),
+                  DropdownButton(
+                    items: category
+                        .map((value) => DropdownMenuItem(
+                              child: Text(
+                                value,
+                                style: TextStyle(color: Color(0xff11b719)),
+                              ),
+                              value: value,
+                            ))
+                        .toList(),
+                   onChanged: (selectedAccountType) {
+                    
+                     /*   final snackBar = SnackBar(
+                                content: Text(
+                                  'Selected Category  is $selectedAccountType',
+                                  style: TextStyle(color: Color(0xff11b719)),
+                                ),
+                              );
+                              Scaffold.of(context).showSnackBar(snackBar);*/
+                      setState(() {
+                        selectedType = selectedAccountType;
+                          print('$selectedType');
+                      });
+                     
+                    },
+                    value: selectedType,
+                    isExpanded: false,
+                    hint: Text(
+                      'Choose category Type',
+                      style: TextStyle(color: Color(0xff11b719)),
+                    ),
+                  )
+              ],
+            ),
+          ),
+          */
+           
           
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
