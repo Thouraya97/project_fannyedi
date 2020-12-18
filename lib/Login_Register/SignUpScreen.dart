@@ -48,6 +48,7 @@ class _SignUpScreen extends State<SignUpScreen> {
       //"UserId":userID,
       "UserEmail": email.text,
       "UserAddress": address.text,
+      //"password": password.text,
       // "UserGender": isMale == true ? "Male" : "Female",
       "UserNumber": phoneNumber.text,
       "UserId":userID,

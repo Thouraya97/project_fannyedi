@@ -171,6 +171,7 @@ try {
                         borderSide: BorderSide(color: Color(0xffC90327),width: 1)
                     ),
 
+
                     focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15),
                         borderSide: BorderSide(color: Color(0xffC90327),width: 1)
