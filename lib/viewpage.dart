@@ -5,6 +5,7 @@ import 'package:project_fannyedi/CRUD/addpage.dart';
 import 'package:project_fannyedi/CRUD/informationPage.dart';
 import 'package:project_fannyedi/CRUD/updatepage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:project_fannyedi/category.dart';
 import 'DataSearch.dart';
 import 'Login_Register/LogInScreen.dart';
 //import 'Login_Register/Profile.dart';
@@ -15,6 +16,8 @@ import 'package:project_fannyedi/Login_Register/User_Profile.dart';
 import 'package:project_fannyedi/CRUD/MyProduct.dart';
 import 'package:project_fannyedi/CRUD/categoryautre.dart';
 import 'package:project_fannyedi/CRUD/categorybracelets.dart';
+
+
 
 void main() {
   runApp(MaterialApp(
@@ -105,6 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+     
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xffC90327),
@@ -249,34 +253,23 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
 
-      body: Row(
-        // mainAxisAlignment: MainAxisAlignment.spaceEvenly
-        crossAxisAlignment: CrossAxisAlignment.start,
-
+      body: 
+   new Column(
         children: <Widget>[
-          RaisedButton(
-            child: Text('Autres', style: TextStyle(color: Colors.white)),
-            color: Colors.redAccent,
-            onPressed: () {
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (BuildContext context) =>
-                          categoryautre(currentEmail)));
-            },
-          ),
-          RaisedButton(
-            child: Text('bracelets', style: TextStyle(color: Colors.white)),
-            color: Colors.redAccent,
-            onPressed: () {
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (BuildContext context) =>
-                          categorybracelets(currentEmail)));
-            },
-          ),
-          Expanded(
+
+ new Padding(padding: const EdgeInsets.all(4.0),
+            child: Container(
+                alignment: Alignment.centerLeft,
+                child: new Text('Categories')),),
+       
+          HorizontalList(),
+                  
+                    
+     new Padding(padding: const EdgeInsets.all(8.0),
+            child: Container(
+                alignment: Alignment.centerLeft,
+                child: new Text('Recent products')),),
+      Expanded(
             child: StreamBuilder(
                 stream: FirebaseFirestore.instance
                     .collection("Products")
