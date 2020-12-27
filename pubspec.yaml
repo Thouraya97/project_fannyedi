@@ -76,6 +76,12 @@ flutter:
     - assets/i9.jpg
     - assets/b.png
     - assets/c.png
+    - assets/jewelry.png
+    - assets/dolls.png
+    - assets/decoration.png
+    - assets/others.jpg
+    - assets/painting.png
+    - assets/knitting.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

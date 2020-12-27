@@ -26,10 +26,9 @@ class _MyInfoPageState extends State<MyInfoPage> {
 
   Future getPost() async {
     var firestore = FirebaseFirestore.instance;
-    QuerySnapshot qn = await firestore.collection("colrecipes").get();
+    QuerySnapshot qn = await firestore.collection("Products").get();
     return qn.docs;
   }
-
   @override
   void initState() {
     super.initState();
@@ -57,20 +56,20 @@ class _MyInfoPageState extends State<MyInfoPage> {
         'cartuserId': cartuserID
       });
       setState(() => id = ref.id);
-      Navigator.of(context).pop();
+    //  Navigator.of(context).pop();
       
     
   }
 
   @override
   Widget build(BuildContext context) {
-    getPost();
+   // getPost();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xffC90327),
         title: Text('Information Page'),
       ),
-      body: SingleChildScrollView(
+    body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
         child: Card(
           child: Center(
@@ -90,7 +89,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
                     ),
                   ],
                 ),
-                //  new IniciarIcon(),
+                 new IniciarIcon(),
                 new ListTile(
                   //leading: const Icon(Icon., color: Colors.black),
                   title: new TextFormField(
@@ -183,5 +182,6 @@ class IconoMenu extends StatelessWidget {
         ],
       ),
     );
+
   }
 }

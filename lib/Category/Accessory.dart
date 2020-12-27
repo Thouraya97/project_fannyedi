@@ -1,42 +1,31 @@
+import 'dart:io';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:project_fannyedi/CRUD/MyCart.dart';
 import 'package:project_fannyedi/CRUD/addpage.dart';
 import 'package:project_fannyedi/CRUD/informationPage.dart';
 import 'package:project_fannyedi/CRUD/updatepage.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:project_fannyedi/Login_Register/LogInScreen.dart';
+import 'package:project_fannyedi/viewpage.dart'; //formateo hora
 
-//import 'Login_Register/Profile.dart';
+File image;
+String filename;
 
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:project_fannyedi/Login_Register/User_Profile.dart';
-import 'package:project_fannyedi/CRUD/MyProduct.dart';
+class Accessory extends StatefulWidget {
+     FirebaseAuth auth = FirebaseAuth.instance;
 
-
-void main() {
-  runApp(MaterialApp(
-    home: MyApp(),
-  ));
-}
-
-
-class CommonThings {
-  static Size size;
-}
-
-class categoryautre extends StatefulWidget {
-  String currentEmail;
-
- categoryautre (this.currentEmail);
-
+ // String currentEmail;
+  final DocumentSnapshot ds;
+  Accessory ({this.ds});
   @override
-  _categoryautreState createState() => _categoryautreState(currentEmail);
+  _AccessoryState createState() => _AccessoryState(auth.currentUser.email);
 }
 
-class _categoryautreState extends State<categoryautre> {
-  String currentEmail;
-  FirebaseAuth auth = FirebaseAuth.instance;
+class _AccessoryState extends State<Accessory> {
+   String currentEmail ="";
+
+   FirebaseAuth auth = FirebaseAuth.instance;
 
   int _page = 0;
   Future<void> Goto() async {
@@ -44,14 +33,18 @@ class _categoryautreState extends State<categoryautre> {
       Navigator.of(context).pushReplacement(MaterialPageRoute(
           /*builder: (BuildContext context) => HomeScreen(value.email))*/
           builder: (BuildContext context) =>
-              categoryautre(auth.currentUser.email)));
+              MyHomePage(auth.currentUser.email)));
     }
   }
-
+  String name;
+  String product;
   String id;
   final db = FirebaseFirestore.instance;
   final MyAddPage add = MyAddPage();
   Widget _showPage = new MyAddPage();
+
+
+  _AccessoryState(email);
   Widget _pageChooser(int page) {
     switch (page) {
       case 2:
@@ -62,9 +55,8 @@ class _categoryautreState extends State<categoryautre> {
   // final ProfileScreen profile = ProfileScreen();
 
   //final _formKey = GlobalKey<FormState>();
-  String name;
-  String product;
-  _categoryautreState(this.currentEmail);
+  
+ // _categoryautreState();
 
   //create function for delete one register
   void deleteData(DocumentSnapshot doc) async {
@@ -89,7 +81,8 @@ class _categoryautreState extends State<categoryautre> {
         MaterialPageRoute(
             builder: (context) => MyInfoPage(
                   ds: ds,
-                )));
+                ))            
+    );
   }
 
   void logOut()  {
@@ -98,125 +91,33 @@ class _categoryautreState extends State<categoryautre> {
           MaterialPageRoute(builder: (BuildContext context) => LogInScreen()));
     });
   }
+  Future getPosts() async {
+    var firestore = FirebaseFirestore.instance;
+    QuerySnapshot qn = await firestore.collection("Products").get();
+    // print();
+    return qn.docs;
+  }
 
   @override
   Widget build(BuildContext context) {
+    getPosts();
     return Scaffold(
-      appBar: AppBar(
+       appBar: AppBar(
         backgroundColor: Color(0xffC90327),
-        title: Text('Home Page'),
-        actions: <Widget>[],
-      ),
+        title: Text('Accessory'),
+          
+        leading: IconButton(
+    icon: Icon(Icons.arrow_back, color: Colors.white),
+    onPressed: () {
+      Navigator.pop(context);
+Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => MyHomePage(currentEmail)),
+          );
+          }
+,
+  ), 
        
-      // image_carousel,
-      drawer: Drawer(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              width: double.infinity,
-              height: 170,
-              color: Colors.black,
-              child: Column(
-                children: <Widget>[
-                  Padding(padding: EdgeInsets.only(top: 30)),
-                  Image(
-                    image: AssetImage("assets/logos.png"),
-                    height: 90,
-                    width: 90,
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    currentEmail,
-                    style: TextStyle(color: Colors.white),
-                  )
-                ],
-              ),
-            ),
-            ListTile(
-              title: Text("Upload"),
-              leading: Icon(Icons.add_business),
-              onTap: () {
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) => MyAddPage()));
-              },
-            ),
-
-            ListTile(
-              title: Text("My Products"),
-              leading: Icon(Icons.collections_bookmark),
-              onTap: () {
-                if (auth.currentUser != null) {
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      /*builder: (BuildContext context) => HomeScreen(value.email))*/
-                      builder: (BuildContext context) =>
-                          MyProducts(auth.currentUser.email)));
-                }
-
-                ///  Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => MyProducts()));
-              },
-            ),
-            ListTile(
-              title: Text("My Cart"),
-              leading: Icon(Icons.local_grocery_store),
-              onTap: () {
-                if (auth.currentUser != null) {
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      /*builder: (BuildContext context) => HomeScreen(value.email))*/
-                      builder: (BuildContext context) =>
-                          MyCart(auth.currentUser.email)));
-                }
-
-                ///  Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => MyProducts()));
-              },
-            ),
-
-            ListTile(
-                title: Text("My Profile"),
-                leading: Icon(Icons.person),
-                onTap: () {
-                  if (auth.currentUser != null) {
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(
-                        builder: (BuildContext context) => ProfileScreen()));
-                  }
-                }),
-            Divider(),
-
-            ListTile(
-                title: Text("My Home"),
-                leading: Icon(Icons.home),
-                onTap: () {
-                  if (auth.currentUser != null) {
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(
-                        builder: (BuildContext context) =>
-                            categoryautre(currentEmail)));
-                  }
-                }),
-            Divider(),
-
-            ListTile(
-                title: Text("Log Out"),
-                leading: Icon(Icons.logout),
-                onTap: () {
-                  FirebaseAuth.instance.signOut().then((value) {
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (BuildContext context) => LogInScreen()));
-    });
-                }),
-            Divider(),
-
-            ListTile(
-              title: Text("Contact Us"),
-              leading: Icon(Icons.email),
-            ) //line
-
-            //line
-          ],
-        ),
       ),
 
       body: 
@@ -224,7 +125,7 @@ class _categoryautreState extends State<categoryautre> {
  StreamBuilder(
           stream: FirebaseFirestore.instance
               .collection("Products")
-              .where('category', isEqualTo: 'Autres')
+              .where('category', isEqualTo: 'accessory')
               .get()
               .asStream(),
           builder:
@@ -340,4 +241,5 @@ class _categoryautreState extends State<categoryautre> {
       ),
     );
   }
+ 
 }

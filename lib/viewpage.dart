@@ -5,8 +5,7 @@ import 'package:project_fannyedi/CRUD/addpage.dart';
 import 'package:project_fannyedi/CRUD/informationPage.dart';
 import 'package:project_fannyedi/CRUD/updatepage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:project_fannyedi/category.dart';
-import 'DataSearch.dart';
+import 'package:project_fannyedi/Category/category.dart';
 import 'Login_Register/LogInScreen.dart';
 //import 'Login_Register/Profile.dart';
 
@@ -14,10 +13,7 @@ import 'package:carousel_pro/carousel_pro.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:project_fannyedi/Login_Register/User_Profile.dart';
 import 'package:project_fannyedi/CRUD/MyProduct.dart';
-import 'package:project_fannyedi/CRUD/categoryautre.dart';
-import 'package:project_fannyedi/CRUD/categorybracelets.dart';
-
-
+import 'package:project_fannyedi/Category/Others.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -69,7 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
   // final ProfileScreen profile = ProfileScreen();
 
   //final _formKey = GlobalKey<FormState>();
-  //String name;
+  String name;
   String product;
   _MyHomePageState(this.currentEmail);
 
@@ -108,26 +104,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-     
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xffC90327),
         title: Text('Home Page'),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.search),
-            onPressed: () {
-             // showSearch(context: context, delegate: DataSearch());
-              Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-                return CloudFirestoreSearch(currentEmail);
-                }));
-            },
-            
-          ),      
-        ],
+        actions: <Widget>[],
       ),
-    
-        
+
       // image_carousel,
       drawer: Drawer(
         child: Column(
@@ -218,16 +201,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 }),
             Divider(),
 
-            ListTile(
-                title: Text("Category"),
-                leading: Icon(Icons.home),
-                onTap: () {
-                  if (auth.currentUser != null) {
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(
-                        builder: (BuildContext context) =>
-                            categoryautre(currentEmail)));
-                  }
-                }),
+          
             Divider(),
 
             ListTile(
@@ -253,8 +227,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
 
-      body: 
-   new Column(
+      body:  new Column(
         children: <Widget>[
 
  new Padding(padding: const EdgeInsets.all(4.0),
@@ -263,13 +236,43 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: new Text('Categories')),),
        
           HorizontalList(),
-                  
+            new Padding(padding: const EdgeInsets.all(4.0),
+            child: Container(
+                alignment: Alignment.centerLeft,
+                child: new Text('')),),     
                     
-     new Padding(padding: const EdgeInsets.all(8.0),
+     new Padding(padding: const EdgeInsets.all(5.0),
             child: Container(
                 alignment: Alignment.centerLeft,
                 child: new Text('Recent products')),),
-      Expanded(
+          
+        /*  RaisedButton(
+            child: Text('Autres', style: TextStyle(color: Colors.white)),
+            color: Colors.redAccent,
+            onPressed: () {
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                          categoryautre(currentEmail)));
+            },
+          ),
+          RaisedButton(
+            child: Text('bracelets', style: TextStyle(color: Colors.white)),
+            color: Colors.redAccent,
+            onPressed: () {
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                          categorybracelets(currentEmail)));
+            },
+          ),*/
+         /*  new Padding(padding: const EdgeInsets.all(4.0),
+            child: Container(
+                alignment: Alignment.centerLeft,
+                child: new Text('')),),*/
+          Expanded(
             child: StreamBuilder(
                 stream: FirebaseFirestore.instance
                     .collection("Products")

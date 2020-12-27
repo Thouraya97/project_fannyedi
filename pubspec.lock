@@ -98,7 +98,7 @@ packages:
       name: curved_navigation_bar
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.3.4"
+    version: "0.3.7"
   date_format:
     dependency: "direct main"
     description:
@@ -288,7 +288,7 @@ packages:
       name: image_picker
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.6.7+15"
+    version: "0.6.7+17"
   image_picker_platform_interface:
     dependency: transitive
     description:
