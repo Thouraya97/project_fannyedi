@@ -1,55 +1,57 @@
+import 'dart:io';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:project_fannyedi/CRUD/MyCart.dart';
+import 'package:project_fannyedi/CRUD/MyProduct.dart';
 import 'package:project_fannyedi/CRUD/addpage.dart';
 import 'package:project_fannyedi/CRUD/informationPage.dart';
 import 'package:project_fannyedi/CRUD/updatepage.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:project_fannyedi/Category/category.dart';
-import 'package:project_fannyedi/DataSearch.dart';
-import 'Login_Register/LogInScreen.dart';
-import 'package:carousel_pro/carousel_pro.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:project_fannyedi/Login_Register/LogInScreen.dart';
 import 'package:project_fannyedi/Login_Register/User_Profile.dart';
-import 'package:project_fannyedi/CRUD/MyProduct.dart';
+import 'package:project_fannyedi/firstScreen.dart';
+import 'package:project_fannyedi/viewpage.dart'; //formateo hora
 
-void main() {
-  runApp(MaterialApp(
-    home: MyApp(),
-  ));
-}
+File image;
+String filename;
 
-class CommonThings {
-  static Size size;
-}
+class Accessory extends StatefulWidget {
+     FirebaseAuth auth = FirebaseAuth.instance;
 
-class MyHomePage extends StatefulWidget {
-  String currentEmail;
+String currentEmail;
 
-  MyHomePage(this.currentEmail);
-
+  Accessory(this.currentEmail);
   @override
-  _MyHomePageState createState() => _MyHomePageState(currentEmail);
+  _AccessoryState createState() => _AccessoryState(currentEmail);
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  String currentEmail;
-  FirebaseAuth auth = FirebaseAuth.instance;
-  String uid = FirebaseAuth.instance.currentUser.uid;
+class _AccessoryState extends State<Accessory> {
+   String currentEmail ="";
+
+   FirebaseAuth auth = FirebaseAuth.instance;
 
   int _page = 0;
   Future<void> Goto() async {
     if (auth.currentUser != null) {
       Navigator.of(context).pushReplacement(MaterialPageRoute(
+          /*builder: (BuildContext context) => HomeScreen(value.email))*/
           builder: (BuildContext context) =>
               MyHomePage(auth.currentUser.email)));
     }
   }
+  String name;
+  String uid = FirebaseAuth.instance.currentUser.uid;
 
-  int pageIndex = 0;
+  String product;
   String id;
   final db = FirebaseFirestore.instance;
-  final MyAddPage _add = new MyAddPage();
+  
+
+
+  _AccessoryState(this.currentEmail);
+ 
+ final MyAddPage _add = new MyAddPage();
   final MyProducts _myproducts =
       new MyProducts(FirebaseAuth.instance.currentUser.email);
   final ProfileScreen _profile = new ProfileScreen();
@@ -82,15 +84,12 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  String name;
-  String product;
-  _MyHomePageState(this.currentEmail);
-
   void deleteData(DocumentSnapshot doc) async {
     await db.collection('Products').doc(doc.id).delete();
     setState(() => id = null);
   }
 
+  //create tha funtion navigateToDetail
   navigateToDetail(DocumentSnapshot ds) {
     Navigator.push(
         context,
@@ -100,174 +99,61 @@ class _MyHomePageState extends State<MyHomePage> {
                 )));
   }
 
+  //create tha funtion navigateToDetail
   navigateToInfo(DocumentSnapshot ds) {
     Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => MyInfoPage(
                   ds: ds,
-                )));
+                ))            
+    );
   }
 
-  void logOut() {
+  void logOut()  {
     FirebaseAuth.instance.signOut().then((value) {
       Navigator.pushReplacement(context,
           MaterialPageRoute(builder: (BuildContext context) => LogInScreen()));
     });
   }
+  Future getPosts() async {
+    var firestore = FirebaseFirestore.instance;
+    QuerySnapshot qn = await firestore.collection("Products").get();
+    // print();
+    return qn.docs;
+  }
 
   @override
   Widget build(BuildContext context) {
+    getPosts();
     return Scaffold(
        appBar: AppBar(
         backgroundColor: Color(0xffC90327),
-        title: Text('Home Page'),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.search ),
-            onPressed: () {
-             // showSearch(context: context, delegate: DataSearch());
-              Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-                return CloudFirestoreSearch(currentEmail);
-                }));
-            },
-            
-          ),      
-        ],
-      ),
-      // image_carousel,
-      drawer: Drawer(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              width: double.infinity,
-              height: 170,
-              color: Colors.black,
-              child: Column(
-                children: <Widget>[
-                  Padding(padding: EdgeInsets.only(top: 30)),
-                  Image(
-                    image: AssetImage("assets/logos.png"),
-                    height: 90,
-                    width: 90,
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    currentEmail,
-                    style: TextStyle(color: Colors.white),
-                  )
-                ],
-              ),
-            ),
-            ListTile(
-              title: Text("Upload"),
-              leading: Icon(Icons.add_business),
-              onTap: () {
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) => MyAddPage()));
-              },
-            ),
-
-            ListTile(
-              title: Text("My Products"),
-              leading: Icon(Icons.collections_bookmark),
-              onTap: () {
-                if (auth.currentUser != null) {
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      builder: (BuildContext context) =>
-                          MyProducts(auth.currentUser.email)));
-                }
-              },
-            ),
-            ListTile(
-              title: Text("My Cart"),
-              leading: Icon(Icons.local_grocery_store),
-              onTap: () {
-                if (auth.currentUser != null) {
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      builder: (BuildContext context) =>
-                          MyCart(auth.currentUser.email)));
-                }
-              },
-            ),
-
-            ListTile(
-                title: Text("My Profile"),
-                leading: Icon(Icons.person),
-                onTap: () {
-                  if (auth.currentUser != null) {
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(
-                        builder: (BuildContext context) => ProfileScreen()));
-                  }
-                }),
-            Divider(),
-
-            ListTile(
-                title: Text("My Home"),
-                leading: Icon(Icons.home),
-                onTap: () {
-                  if (auth.currentUser != null) {
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(
-                        builder: (BuildContext context) =>
-                            MyHomePage(currentEmail)));
-                  }
-                }),
-            Divider(),
-
-            ListTile(
-                title: Text("Log Out"),
-                leading: Icon(Icons.logout),
-                onTap: () {
-                  FirebaseAuth.instance.signOut().then((value) {
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (BuildContext context) => LogInScreen()));
-                  });
-                }),
-            Divider(),
-
-            ListTile(
-              title: Text("Contact Us"),
-              leading: Icon(Icons.email),
-            ) //line
-
-            //line
-          ],
-        ),
-      ),
-
-      body:  new Column(
-        children: <Widget>[
-
- new Padding(padding: const EdgeInsets.all(4.0),
-            child: Container(
-                alignment: Alignment.centerLeft,
-                child: new Text('Categories')),),
-       
-          HorizontalList(currentEmail),
-            new Padding(padding: const EdgeInsets.all(4.0),
-            child: Container(
-                alignment: Alignment.centerLeft,
-                child: new Text('')),),     
-                    
-     new Padding(padding: const EdgeInsets.all(5.0),
-            child: Container(
-                alignment: Alignment.centerLeft,
-                child: new Text('Recent products')),),
+        title: Text('Accessory'),
           
-      
-          Expanded(
-            child: StreamBuilder(
-                stream: FirebaseFirestore.instance
-                    .collection("Products")
-                    .snapshots(),
-                builder: (BuildContext context,
+        leading: IconButton(
+    icon: Icon(Icons.arrow_back, color: Colors.white),
+    onPressed: () {
+      Navigator.pop(context);
+Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => MyFirst(currentEmail)),
+          );
+          }
+,
+  ), 
+       
+      ),
+
+      body: 
+    
+ StreamBuilder(
+          stream: FirebaseFirestore.instance
+              .collection("Products")
+              .where('category', isEqualTo: 'accessory')
+              .get()
+              .asStream(),
+          builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (!snapshot.hasData) {
                     return Text('"Loading...');
@@ -353,9 +239,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         }
                         );
                 }),
-          ),
-        ],
-      ),
+       
+       
 
     
     );

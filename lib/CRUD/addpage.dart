@@ -61,6 +61,10 @@ class _MyAddPageState extends State<MyAddPage> {
   String price;
   String description;
 
+  var selectedType;
+
+  String currentEmail;
+
   pickerCam() async {
     File img = await ImagePicker.pickImage(source: ImageSource.camera);
     if (img != null) {
@@ -95,7 +99,6 @@ class _MyAddPageState extends State<MyAddPage> {
 
     final Reference ref = FirebaseStorage.instance.ref().child(fullImageName);
     final UploadTask task = ref.putFile(image);
-
     var part1 =
         'https://firebasestorage.googleapis.com/v0/b/fannyedi-b1af6.appspot.com/o/';
 
@@ -111,6 +114,8 @@ class _MyAddPageState extends State<MyAddPage> {
         'price': '$price',
         'description': '$description',
         'image': '$fullPathImage',
+        'category': '$selectedType',
+
         'ownerId': ownerID
       });
       setState(() => id = ref.id);
@@ -130,6 +135,18 @@ class _MyAddPageState extends State<MyAddPage> {
       appBar: AppBar(
         title: Text('Add Product'),
         backgroundColor: Color(0xffC90327),
+           
+        leading: IconButton(
+    icon: Icon(Icons.arrow_back, color: Colors.white),
+    onPressed: () {
+      Navigator.pop(context);
+Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => MyFirst(currentEmail)),
+          );
+          }
+,
+  ), 
       ),
       body: ListView(
         padding: EdgeInsets.all(8),
@@ -205,19 +222,111 @@ class _MyAddPageState extends State<MyAddPage> {
                     },
                     onSaved: (value) => description = value,
                   ),
-                )
+                ),
+            SizedBox(height: 40.0),
+              StreamBuilder<QuerySnapshot>(
+                  stream: Firestore.instance.collection("category").snapshots(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData)
+                      const Text("Loading.....");
+                    else {
+                      List<DropdownMenuItem> currencyItems = [];
+                      for (int i = 0; i < snapshot.data.documents.length; i++) {
+                        DocumentSnapshot snap = snapshot.data.documents[i];
+                        currencyItems.add(
+                          DropdownMenuItem(
+                            child: Text(
+                              snap.documentID,
+                              style: TextStyle
+                              ( color: (
+                                Colors.black)
+                                ),
+                            ),
+                            value: "${snap.documentID}",
+                          ),
+                        );
+                      }
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+
+                          SizedBox(width: 50.0),
+                          DropdownButton(
+                            items: currencyItems,
+                            onChanged: (selectedAccountType) {
+                            
+                            
+                              setState(() {
+                                selectedType = selectedAccountType;          
+
+                              });
+                            },
+                           value: selectedType,
+                            isExpanded: false,
+                            hint: new Text(
+                              "Choose Category  Type",
+                            style: TextStyle( 
+                              color: (
+                                Colors.black
+                                )
+                                ),
+                                            
+                                            ),
+                                                
+                          ),
+                        ],
+                      );
+                    }
+                  }), 
               ],
             ),
           ),
+           /*  SizedBox(width: 50.0),
+                  DropdownButton(
+                    items: category
+                        .map((value) => DropdownMenuItem(
+                              child: Text(
+                                value,
+                                style: TextStyle(color: Color(0xff11b719)),
+                              ),
+                              value: value,
+                            ))
+                        .toList(),
+                   onChanged: (selectedAccountType) {
+                    
+                     /*   final snackBar = SnackBar(
+                                content: Text(
+                                  'Selected Category  is $selectedAccountType',
+                                  style: TextStyle(color: Color(0xff11b719)),
+                                ),
+                              );
+                              Scaffold.of(context).showSnackBar(snackBar);*/
+                      setState(() {
+                        selectedType = selectedAccountType;
+                          print('$selectedType');
+                      });
+                     
+                    },
+                    value: selectedType,
+                    isExpanded: false,
+                    hint: Text(
+                      'Choose category Type',
+                      style: TextStyle(color: Color(0xff11b719)),
+                    ),
+                  )
+              ],
+            ),
+          ),
+          */
+           
+          
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               RaisedButton(
-                
                 onPressed: createData,
-                child: Text('Create', style: TextStyle(color: Colors.white),),
+                child: Text('Create', style: TextStyle(color: Colors.white)),
                 color: Colors.black,
-                
               ),
             ],
           )
