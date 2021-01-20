@@ -10,6 +10,7 @@ import 'package:carousel_pro/carousel_pro.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:project_fannyedi/Login_Register/User_Profile.dart';
 import 'package:project_fannyedi/CRUD/MyProduct.dart';
+import 'DataSearch.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -31,6 +32,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+    bool searchState = false;
+
   String currentEmail;
   FirebaseAuth auth = FirebaseAuth.instance;
   String uid = FirebaseAuth.instance.currentUser.uid;
@@ -89,7 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() => id = null);
   }
 
-  navigateToDetail(DocumentSnapshot ds) {
+  navigateToUpdate(DocumentSnapshot ds) {
     Navigator.push(
         context,
         MaterialPageRoute(
@@ -119,8 +122,45 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xffC90327),
-        title: Text('Home Page'),
-        actions: <Widget>[],
+       title: !searchState
+            ? Text("Home")
+            : TextField(
+                decoration: InputDecoration(
+                  icon: Icon(Icons.search),
+                  hintText: "Search ...",
+                  hintStyle: TextStyle(color: Colors.white),
+                ),
+              /*  onChanged: (text) {
+                  //SearchMethod(text);
+                  
+                },*/
+              ),
+        actions: <Widget>[
+          !searchState
+              ? IconButton(
+                  icon: Icon(
+                    Icons.search,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {
+                     Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+                return CloudFirestoreSearch(currentEmail);
+                }));
+                    setState(() {
+                      searchState = !searchState;
+                    });
+                  })
+              : IconButton(
+                  icon: Icon(
+                    Icons.cancel,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      searchState = !searchState;
+                    });
+                  }),
+        ],
       ),
       // image_carousel,
       drawer: Drawer(
@@ -229,7 +269,8 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
 
-      body: StreamBuilder(
+      body: 
+                StreamBuilder(
           stream: FirebaseFirestore.instance.collection("Products").snapshots(),
           builder:
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -254,7 +295,10 @@ class _MyHomePageState extends State<MyHomePage> {
                           Row(
                             children: <Widget>[
                               InkWell(
-                                onTap: () => navigateToDetail(doc),
+                                onTap: () => 
+                                 uid == doc.data()["ownerId"]
+                                ?navigateToUpdate(doc)
+                                :navigateToInfo(doc),
                                 child: new Container(
                                   child: Image.network(
                                     '${doc.data()["image"]}' + '?alt=media',
@@ -279,7 +323,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                 style: TextStyle(
                                     color: Colors.redAccent, fontSize: 12.0),
                               ),
-                              onTap: () => navigateToDetail(doc),
+                              onTap: () =>  
+                              uid == doc.data()["ownerId"]
+                              ?navigateToUpdate(doc)
+                              :navigateToInfo(doc),
                             ),
                           ),
                           Divider(),
@@ -317,6 +364,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 });
           }),
 
+             
+        
        );
   }
 }

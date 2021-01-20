@@ -35,7 +35,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           content: Text("Name Is Empty "),
         ),
       );
-    } else if (userName.text.length < 4) {
+    } else if (userName.text.length < 6) {
       _scaffoldKey.currentState.showSnackBar(
         SnackBar(
           content: Text("Name Must Be 6 "),
@@ -64,16 +64,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-final  String userUid=FirebaseAuth.instance.currentUser.uid;
+  String userUid;
 
   Future<String> _uploadImage({File image}) async {
     Reference storageReference =
         FirebaseStorage.instance.ref().child("UserImage/$userUid");
+    UploadTask uploadTask = storageReference.putFile(image);
+    //StorageTaskSnapshot snapshot = await uploadTask.Complete;
     String imageUrl = await storageReference.getDownloadURL();
     return imageUrl;
   }
 
- 
+  void getUserUid() {
+    User myUser = FirebaseAuth.instance.currentUser;
+    userUid = myUser.uid;
+  }
+
   bool centerCircle = false;
   var imageMap;
   void userDetailUpdate() async {
@@ -138,7 +144,11 @@ final  String userUid=FirebaseAuth.instance.currentUser.uid;
     address = TextEditingController(text: userModel.userAddress);
     userName = TextEditingController(text: userModel.userName);
     phoneNumber = TextEditingController(text: userModel.userPhoneNumber);
-   
+    /*if (userModel.userGender == "Male") {
+      isMale = true;
+    } else {
+      isMale = false;
+    }*/
     return Container(
       height: double.infinity,
       width: double.infinity,
@@ -153,6 +163,10 @@ final  String userUid=FirebaseAuth.instance.currentUser.uid;
             endText: userModel.userEmail,
             startText: "Email",
           ),
+         /* _buildSingleContainer(
+            endText: userModel.userGender,
+            startText: "Gender",
+          ),*/
           _buildSingleContainer(
             endText: userModel.userPhoneNumber,
             startText: "Phone Number",
@@ -241,6 +255,7 @@ final  String userUid=FirebaseAuth.instance.currentUser.uid;
 
   @override
   Widget build(BuildContext context) {
+    getUserUid();
     return Scaffold(
       resizeToAvoidBottomInset: true,
       key: _scaffoldKey,
@@ -263,6 +278,7 @@ final  String userUid=FirebaseAuth.instance.currentUser.uid;
                 icon: Icon(
                   Icons.arrow_back,
                   color: Colors.black45,
+                  size: 30,
                 ),
                 onPressed: () {
                   setState(() {
@@ -282,7 +298,7 @@ final  String userUid=FirebaseAuth.instance.currentUser.uid;
                   icon: Icon(
                     Icons.check,
                     size: 30,
-                    color: Color(0xff746bc9),
+                    color: Colors.white,
                   ),
                   onPressed: () {
                     vaildation();
@@ -401,7 +417,7 @@ final  String userUid=FirebaseAuth.instance.currentUser.uid;
                                     borderRadius: BorderRadius.circular(20)),
                                 child: edit == false
                                     ? MyButton(
-                                        //name: "Edit Profile",
+                                       // name: "Edit Profile",
                                         onPressed: () {
                                           setState(() {
                                             edit = true;
@@ -424,6 +440,7 @@ final  String userUid=FirebaseAuth.instance.currentUser.uid;
   }
 }
 
+
 class MyTextFormField extends StatelessWidget {
   final TextEditingController controller;
   final String name;
@@ -445,7 +462,7 @@ class MyTextFormField extends StatelessWidget {
 }
 class MyButton extends StatelessWidget {
   final Function onPressed;
-  //final String name;
+ // final String name;
   MyButton({ this.onPressed});
   @override
   Widget build(BuildContext context) {
@@ -454,7 +471,7 @@ class MyButton extends StatelessWidget {
       width: double.infinity,
       child: RaisedButton(
         child: Text(
-          "Edit",
+         "Edit Profile",
           style: TextStyle(color: Colors.white),
         ),
         color: Color(0xffC90327),

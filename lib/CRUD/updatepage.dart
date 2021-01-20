@@ -208,7 +208,7 @@ class _MyUpdatePageState extends State<MyUpdatePage> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               RaisedButton(
-                child: Text('Update'),
+                child: Text('Update',style: TextStyle(color: Colors.white)),
                
                    color: Colors.black,
                 onPressed: () {

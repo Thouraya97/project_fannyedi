@@ -56,7 +56,7 @@ class _MyAddPageState extends State<MyAddPage> {
   final db = FirebaseFirestore.instance;
   final dbuser = FirebaseFirestore.instance;
   final _formKey = GlobalKey<FormState>();
-  
+   
   String name;
   String price;
   String description;
@@ -103,6 +103,10 @@ class _MyAddPageState extends State<MyAddPage> {
     print(fullPathImage);
     final user = auth.currentUser;
     final ownerID = user.uid;
+    final CollectionReference utilisateurs = FirebaseFirestore.instance.collection('User');
+    final result = await utilisateurs.doc(ownerID).get();
+    final ownerName= result.data()['UserName'] ;
+
 
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
@@ -114,6 +118,18 @@ class _MyAddPageState extends State<MyAddPage> {
         'ownerId': ownerID
       });
       setState(() => id = ref.id);
+      ref.set({
+        'productId': ref.id,
+        'name': '$name',
+        'price': '$price',
+        'description': '$description',
+        'image': '$fullPathImage',
+        'ownerId': ownerID,
+        'ownerName': ownerName,
+        'addingDate' : DateTime.now() 
+
+
+      });
        if (auth.currentUser != null) {
                   Navigator.of(context).pushReplacement(MaterialPageRoute(
                       builder: (BuildContext context) =>
