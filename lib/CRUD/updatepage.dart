@@ -29,6 +29,8 @@ class _MyUpdatePageState extends State<MyUpdatePage> {
   String price;
   String description;
 
+  var selectedType;
+
   void updateData() async {
      DateTime now = DateTime.now();
                   String nuevoformato =
@@ -46,12 +48,14 @@ class _MyUpdatePageState extends State<MyUpdatePage> {
                   var fullPathImage = part1 + fullImageName2;
                   print(fullPathImage);
                   FirebaseFirestore.instance
-                      .collection('colrecipes')
+                      .collection('Products')
                       .doc(widget.ds.id)
                       .update({
                     'name': nameInputController.text,
                     'recipe': priceInputController.text,
-                    'image': '$fullPathImage'
+                    'image': '$fullPathImage',
+                    'category': '$selectedType',
+
                   });
                   Navigator.of(context).pop(); 
 
@@ -200,19 +204,111 @@ class _MyUpdatePageState extends State<MyUpdatePage> {
                     },
                     onSaved: (value) => description = value,
                   ),
-                )
+                ),
+               SizedBox(height: 40.0),
+              StreamBuilder<QuerySnapshot>(
+                  stream: Firestore.instance.collection("category").snapshots(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData)
+                      const Text("Loading.....");
+                    else {
+                      List<DropdownMenuItem> currencyItems = [];
+                      for (int i = 0; i < snapshot.data.documents.length; i++) {
+                        DocumentSnapshot snap = snapshot.data.documents[i];
+                        currencyItems.add(
+                          DropdownMenuItem(
+                            child: Text(
+                              snap.documentID,
+                              style: TextStyle
+                              ( color: (
+                                Colors.black)
+                                ),
+                            ),
+                            value: "${snap.documentID}",
+                          ),
+                        );
+                      }
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+
+                          SizedBox(width: 50.0),
+                          DropdownButton(
+                            items: currencyItems,
+                            onChanged: (selectedAccountType) {
+                            
+                            
+                              setState(() {
+                                selectedType = selectedAccountType;          
+
+                              });
+                            },
+                           value: selectedType,
+                            isExpanded: false,
+                            hint: new Text(
+                              "Choose Category  Type",
+                            style: TextStyle( 
+                              color: (
+                                Colors.black
+                                )
+                                ),
+                                            
+                                            ),
+                                                
+                          ),
+                        ],
+                      );
+                    }
+                  }), 
               ],
             ),
           ),
+           /*  SizedBox(width: 50.0),
+                  DropdownButton(
+                    items: category
+                        .map((value) => DropdownMenuItem(
+                              child: Text(
+                                value,
+                                style: TextStyle(color: Color(0xff11b719)),
+                              ),
+                              value: value,
+                            ))
+                        .toList(),
+                   onChanged: (selectedAccountType) {
+                    
+                     /*   final snackBar = SnackBar(
+                                content: Text(
+                                  'Selected Category  is $selectedAccountType',
+                                  style: TextStyle(color: Color(0xff11b719)),
+                                ),
+                              );
+                              Scaffold.of(context).showSnackBar(snackBar);*/
+                      setState(() {
+                        selectedType = selectedAccountType;
+                          print('$selectedType');
+                      });
+                     
+                    },
+                    value: selectedType,
+                    isExpanded: false,
+                    hint: Text(
+                      'Choose category Type',
+                      style: TextStyle(color: Color(0xff11b719)),
+                    ),
+                  )
+              ],
+            ),
+          ),
+          */
+           
+          
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               RaisedButton(
-                child: Text('Update',style: TextStyle(color: Colors.white)),
-               
-                   color: Colors.black,
-                onPressed: () {
-                   updateData();              },
+                onPressed: updateData,
+                child: Text('Create', style: TextStyle(color: Colors.white)),
+                color: Colors.black,
               ),
             ],
           )

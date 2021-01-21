@@ -5,12 +5,13 @@ import 'package:project_fannyedi/CRUD/addpage.dart';
 import 'package:project_fannyedi/CRUD/informationPage.dart';
 import 'package:project_fannyedi/CRUD/updatepage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:project_fannyedi/Category/category.dart';
+import 'package:project_fannyedi/DataSearch.dart';
 import 'Login_Register/LogInScreen.dart';
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:project_fannyedi/Login_Register/User_Profile.dart';
 import 'package:project_fannyedi/CRUD/MyProduct.dart';
-import 'DataSearch.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -32,11 +33,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-    bool searchState = false;
-
   String currentEmail;
   FirebaseAuth auth = FirebaseAuth.instance;
   String uid = FirebaseAuth.instance.currentUser.uid;
+    bool searchState = false;
 
   int _page = 0;
   Future<void> Goto() async {
@@ -58,31 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final MyHomePage _home =
       new MyHomePage(FirebaseAuth.instance.currentUser.email);
   //final
-  Widget _showPage = new MyHomePage(FirebaseAuth.instance.currentUser.email);
-  Widget _pageChooser(int page) {
-    switch (page) {
-      case 0:
-        return _home;
-        break;
-
-      case 1:
-        return _myproducts;
-        break;
-
-      case 2:
-        return _add;
-        break;
-
-      case 3:
-        return _chariot;
-        break;
-
-      case 5:
-        return _profile;
-        break;
-    }
-  }
-
+  
   String name;
   String product;
   _MyHomePageState(this.currentEmail);
@@ -92,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() => id = null);
   }
 
-  navigateToUpdate(DocumentSnapshot ds) {
+  navigateToDetail(DocumentSnapshot ds) {
     Navigator.push(
         context,
         MaterialPageRoute(
@@ -120,7 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+       appBar: AppBar(
         backgroundColor: Color(0xffC90327),
        title: !searchState
             ? Text("Home")
@@ -162,6 +138,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   }),
         ],
       ),
+      
       // image_carousel,
       drawer: Drawer(
         child: Column(
@@ -269,15 +246,37 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
 
-      body: 
-                StreamBuilder(
-          stream: FirebaseFirestore.instance.collection("Products").snapshots(),
-          builder:
-              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (!snapshot.hasData) {
-              return Text('"Loading...');
-            }
-            int length = snapshot.data.docs.length;
+      body:  new Column(
+        children: <Widget>[
+
+ new Padding(padding: const EdgeInsets.all(4.0),
+            child: Container(
+                alignment: Alignment.centerLeft,
+                child: new Text('Categories')),),
+       
+          HorizontalList(currentEmail),
+            new Padding(padding: const EdgeInsets.all(4.0),
+            child: Container(
+                alignment: Alignment.centerLeft,
+                child: new Text('')),),     
+                    
+     new Padding(padding: const EdgeInsets.all(5.0),
+            child: Container(
+                alignment: Alignment.centerLeft,
+                child: new Text('Recent products')),),
+          
+      
+          Expanded(
+            child: StreamBuilder(
+                stream: FirebaseFirestore.instance
+                    .collection("Products")
+                    .snapshots(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                  if (!snapshot.hasData) {
+                    return Text('"Loading...');
+                  }
+                  int length = snapshot.data.docs.length;
             return GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2, //two columns
@@ -295,10 +294,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           Row(
                             children: <Widget>[
                               InkWell(
-                                onTap: () => 
-                                 uid == doc.data()["ownerId"]
-                                ?navigateToUpdate(doc)
-                                :navigateToInfo(doc),
+                                onTap: () => navigateToDetail(doc),
                                 child: new Container(
                                   child: Image.network(
                                     '${doc.data()["image"]}' + '?alt=media',
@@ -323,10 +319,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 style: TextStyle(
                                     color: Colors.redAccent, fontSize: 12.0),
                               ),
-                              onTap: () =>  
-                              uid == doc.data()["ownerId"]
-                              ?navigateToUpdate(doc)
-                              :navigateToInfo(doc),
+                              onTap: () => navigateToDetail(doc),
                             ),
                           ),
                           Divider(),
@@ -351,21 +344,24 @@ class _MyHomePageState extends State<MyHomePage> {
                                         color: Colors.black,
                                       ),
                                       onPressed: () => navigateToInfo(doc),
-                                    ),
-                                  ],
-                                ),
+                                     ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                ],
                               ),
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                  );
-                });
-          }),
+                            ),
+                          );
+                        }
+                        );
+                }),
+          ),
+        ],
+      ),
 
-             
-        
-       );
+    
+    );
   }
 }

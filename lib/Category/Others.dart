@@ -1,61 +1,79 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:io';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:project_fannyedi/CRUD/MyCart.dart';
+import 'package:project_fannyedi/CRUD/MyProduct.dart';
+import 'package:project_fannyedi/CRUD/addpage.dart';
+import 'package:project_fannyedi/CRUD/informationPage.dart';
+import 'package:project_fannyedi/CRUD/updatepage.dart';
+import 'package:project_fannyedi/Login_Register/LogInScreen.dart';
+import 'package:project_fannyedi/Login_Register/User_Profile.dart';
+import 'package:project_fannyedi/firstScreen.dart';
+import 'package:project_fannyedi/viewpage.dart'; //formateo hora
 
-import 'CRUD/addpage.dart';
-import 'CRUD/informationPage.dart';
-import 'CRUD/updatepage.dart';
-import 'Login_Register/LogInScreen.dart';
+File image;
+String filename;
 
-void main() {
-  runApp(MaterialApp(
-    home: MyApp(),
-  ));
-}
-
-
-class CommonThings {
-  static Size size;
-}
-
-class CloudFirestoreSearch extends StatefulWidget {
-   String currentEmail;
-
- CloudFirestoreSearch(this.currentEmail);
+class Others extends StatefulWidget {
+ String currentEmail;
+  Others(this.currentEmail);
+  
   @override
-  _CloudFirestoreSearchState createState() => _CloudFirestoreSearchState(currentEmail);
+  _OthersState createState() => _OthersState(currentEmail);
 }
 
-class _CloudFirestoreSearchState extends State<CloudFirestoreSearch> {
-   String currentEmail;
-FirebaseAuth auth = FirebaseAuth.instance;
-    String uid = FirebaseAuth.instance.currentUser.uid;
+class _OthersState extends State<Others> {
+      String uid = FirebaseAuth.instance.currentUser.uid;
 
-  int _page = 0;
-  Future<void> Goto() async {
-    if (auth.currentUser != null) {
-      Navigator.of(context).pushReplacement(MaterialPageRoute(
-          /*builder: (BuildContext context) => HomeScreen(value.email))*/
-          builder: (BuildContext context) =>
-              CloudFirestoreSearch(auth.currentUser.email)));
-    }
-  }
-
-  String name = "";
- String id;
-  final db = FirebaseFirestore.instance;
-  final MyAddPage add = MyAddPage();
-   Widget _showPage = new MyAddPage();
-   Widget _pageChooser(int page) {
-    switch (page) {
-      case 2:
-        return add;
-    }
-  }
- 
+  String name;
   String product;
-  _CloudFirestoreSearchState(this.currentEmail);
+  String id;
+  final db = FirebaseFirestore.instance;
+   final MyAddPage _add = new MyAddPage();
+  final MyProducts _myproducts =
+      new MyProducts(FirebaseAuth.instance.currentUser.email);
+  final ProfileScreen _profile = new ProfileScreen();
+  final MyCart _chariot = new MyCart(FirebaseAuth.instance.currentUser.email);
+  final MyHomePage _home =
+      new MyHomePage(FirebaseAuth.instance.currentUser.email);
+  //final
+  Widget _showPage = new MyHomePage(FirebaseAuth.instance.currentUser.email);
+  Widget _pageChooser(int page) {
+    switch (page) {
+      case 0:
+        return _home;
+        break;
+
+      case 1:
+        return _myproducts;
+        break;
+
+      case 2:
+        return _add;
+        break;
+
+      case 3:
+        return _chariot;
+        break;
+
+      case 5:
+        return _profile;
+        break;
+    }
+  }
+
+
+  String currentEmail;
+
+  _OthersState(this.currentEmail);
+  
+  // final ProfileScreen profile = ProfileScreen();
+
+  //final _formKey = GlobalKey<FormState>();
+  
+ // _categoryautreState();
 
   //create function for delete one register
   void deleteData(DocumentSnapshot doc) async {
@@ -80,7 +98,8 @@ FirebaseAuth auth = FirebaseAuth.instance;
         MaterialPageRoute(
             builder: (context) => MyInfoPage(
                   ds: ds,
-                )));
+                ))            
+    );
   }
 
   void logOut()  {
@@ -89,55 +108,51 @@ FirebaseAuth auth = FirebaseAuth.instance;
           MaterialPageRoute(builder: (BuildContext context) => LogInScreen()));
     });
   }
+  Future getPosts() async {
+    var firestore = FirebaseFirestore.instance;
+    QuerySnapshot qn = await firestore.collection("Products").get();
+    // print();
+    return qn.docs;
+  }
 
   @override
   Widget build(BuildContext context) {
+    getPosts();
     return Scaffold(
        appBar: AppBar(
-                backgroundColor: Color(0xffC90327),
-
+        backgroundColor: Color(0xffC90327),
+        title: Text('Others'),
+          
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        title:  TextField(
-            decoration: InputDecoration(
-                icon: Icon(Icons.search), hintText: 'Search...'),
-            onChanged: (val) {
-              setState(() {
-                name = val;
-              });
-            },
-          ),
-        
+    icon: Icon(Icons.arrow_back, color: Colors.white),
+    onPressed: () {
+      Navigator.pop(context);
+Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => MyFirst(currentEmail)),
+          );
+          }
+,
+  ), 
+       
       ),
-     
+
       body: 
-       StreamBuilder(
-        stream: (name != null || name != "")
-            ? FirebaseFirestore.instance
-                .collection('Products')
-      .where('name', isGreaterThanOrEqualTo: name)
-      .where('name', isLessThan: name + 'z')
-      .snapshots()
-
-            : FirebaseFirestore.instance.collection("Products").snapshots(),
-        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          if (!snapshot.hasData) {
-            return Center(
-              child: Text("Error"),
-            );
-          }
+    
+    
+ StreamBuilder(
+                stream: FirebaseFirestore.instance
+              .collection("Products")
+              .where('category', isEqualTo: 'Others')
+              .get()
+              .asStream(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                  if (!snapshot.hasData) {
+                    return Text('"Loading...');
+                  }
                   int length = snapshot.data.docs.length;
-
-                  return GridView.builder(
+            return GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2, //two columns
                   mainAxisSpacing: 0.1, //space the card
